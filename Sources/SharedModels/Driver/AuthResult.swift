@@ -8,5 +8,5 @@
 
 enum AuthResult {
     case success(token: AccessToken)
-    case error(error: Error)
+    case error(AuthError)
 }

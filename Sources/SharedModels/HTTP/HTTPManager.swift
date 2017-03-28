@@ -18,8 +18,19 @@ class HTTPManager {
     
     // MARK: - HTTP Fetching
     
-    func get(_ path: String, relatedTo baseURL: URL) -> JSON? {
-        return fetch(path, relatedTo: baseURL, method: .get, body: "")
+    func get(_ path: String, relatedTo baseURL: URL, parameters: [String: Any] = [:]) -> JSON? {
+        
+        var body: String
+        if !parameters.isEmpty {
+            body = "?"
+            for (key, value) in parameters {
+                body.append("\(key)=\(value)&")
+            }
+            body = String(body.characters.dropLast(1))
+        } else {
+            body = ""
+        }
+        return fetch(path, relatedTo: baseURL, method: .get, body: body)
     }
     
     func post(_ path: String, relatedTo baseURL: URL, fields: [String: Any]) -> JSON? {
