@@ -18,13 +18,11 @@ class VKDriver: SocialDriver {
         
         let baseURL = URL(string: "https://oauth.vk.com")!
         
-        // TODO: change redirect URI
-        
         let parameters: [String: Any] = [
             "client_id": "5948504",
             "client_secret": "",
             "code": code,
-            "redirect_uri": "http://localhost:8090/callback"
+            "redirect_uri": "http://localhost:8090/vk_callback"
         ]
         
         guard let json = HTTPManager.shared.get("/access_token", relatedTo: baseURL, parameters: parameters) else {
