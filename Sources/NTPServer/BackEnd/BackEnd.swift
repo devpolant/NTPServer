@@ -41,6 +41,7 @@ class BackEnd {
             return
         }
         let (db, connection) = try MySQLConnector.connectToDatabase()
+        try db.execute("SET autocommit=0;", [], connection)
         
         let login = fields["login"]!
         let email = fields["email"]!
@@ -79,12 +80,14 @@ class BackEnd {
                                 userId: userId)
         
         do {
-            try DBManager.shared.addToken(token: token)
+            try DBManager.shared.addToken(token: token, to: db, on: connection)
         } catch {
             let errorMessage = "Error while saving user access token"
             try response.internalServerError(message: errorMessage).end()
             return
         }
+        
+        try db.execute("COMMIT;", [], connection)
         
         let result: [String: Any] = [
             "error": false,
