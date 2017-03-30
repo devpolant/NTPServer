@@ -10,7 +10,7 @@ import Foundation
 
 class VKDriver: SocialDriver {
     
-    func auth(with credentials: InitialCredentials, completion: (AuthResult) -> Void) {
+    func auth(with credentials: OAuthCredentials, completion: (AuthResult) -> Void) {
         
         let code = credentials.stringValue
         let redirectURI = credentials.redirectURI

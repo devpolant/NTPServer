@@ -18,6 +18,6 @@ enum AuthError {
 }
 
 protocol SocialDriver {
-    func auth(with credentials: InitialCredentials, completion: AuthCompletion)
+    func auth(with credentials: OAuthCredentials, completion: AuthCompletion)
     func loadPosts(for group: SocialGroup, offset: Int, count: Int, completion: PostsCompletion)
 }
