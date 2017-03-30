@@ -29,24 +29,25 @@ class BackEnd {
     
     func authUser(request: RouterRequest, response: RouterResponse, next: () -> Void) {
         
-        guard let fields = request.getPost(fields: ["code", "oauth_callback_path"]) else {
+        guard let fields = request.getPost(fields: ["code", "redirect_uri"]) else {
             return
         }
         let code = fields["code"]!
-        let callbackPath = fields["oauth_callback_path"]!
+        let redirectURI = fields["redirect_uri"]!
+        
         let inputCredentials = InitialCredentials(stringValue: code,
-                                                  authCallbackPath: callbackPath)
+                                                  redirectURI: redirectURI)
         
         var json: JSON?
         driver.auth(with: inputCredentials) { result in
             switch result {
             case .success(let token):
-                json = JSON(["access_token": token,
+                json = JSON(["access_token": token.tokenString,
                              "userId": token.userId ?? ""])
             case .error( _):
                 break
             }
         }
-        response.send(json: json!)
+        response.send(json: json ?? JSON(["error": true]))
     }
 }

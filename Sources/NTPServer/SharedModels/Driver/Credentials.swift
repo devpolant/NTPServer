@@ -14,8 +14,8 @@ struct InitialCredentials {
     /// Value of code, which needed to get access token.
     var stringValue: String
     
-    /// Callback url, which used on client side for get initial code 'stringValue'.
-    var authCallbackPath: String
+    /// Redirect URI, which used on client side for get initial code (see 'stringValue' above).
+    var redirectURI: String
 }
 
 struct AccessToken {

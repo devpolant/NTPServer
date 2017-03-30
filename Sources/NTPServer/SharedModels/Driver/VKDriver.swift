@@ -10,19 +10,18 @@ import Foundation
 
 class VKDriver: SocialDriver {
     
-    /*
-     https://oauth.vk.com/access_token?client_id=5948504&client_secret=P4ThWqsQhMcM2wkMjW6y&code=d96e12f81e0c9f5e16&redirect_uri=http://localhost:8090/callback
-     */
     func auth(with credentials: InitialCredentials, completion: (AuthResult) -> Void) {
+        
         let code = credentials.stringValue
+        let redirectURI = credentials.redirectURI
         
         let baseURL = URL(string: "https://oauth.vk.com")!
         
         let parameters: [String: Any] = [
             "client_id": "5948504",
-            "client_secret": "",
+            "client_secret": "P4ThWqsQhMcM2wkMjW6y",
             "code": code,
-            "redirect_uri": "http://localhost:8090/vk_callback"
+            "redirect_uri": redirectURI
         ]
         
         guard let json = HTTPManager.shared.get("/access_token", relatedTo: baseURL, parameters: parameters) else {

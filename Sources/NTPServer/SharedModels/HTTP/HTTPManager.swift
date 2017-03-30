@@ -20,17 +20,15 @@ class HTTPManager {
     
     func get(_ path: String, relatedTo baseURL: URL, parameters: [String: Any] = [:]) -> JSON? {
         
-        var body: String
-        if !parameters.isEmpty {
-            body = "?"
+        var requestPath = path
+        if !requestPath.isEmpty {
+            requestPath.append("?")
             for (key, value) in parameters {
-                body.append("\(key)=\(value)&")
+                requestPath.append("\(key)=\(value)&")
             }
-            body = String(body.characters.dropLast(1))
-        } else {
-            body = ""
+            requestPath = String(requestPath.characters.dropLast(1))
         }
-        return fetch(path, relatedTo: baseURL, method: .get, body: body)
+        return fetch(requestPath, relatedTo: baseURL, method: .get, body: "")
     }
     
     func post(_ path: String, relatedTo baseURL: URL, fields: [String: Any]) -> JSON? {
@@ -40,18 +38,19 @@ class HTTPManager {
     
     func fetch(_ path: String, relatedTo baseURL: URL, method: HTTPMethod, body requestBody: String) -> JSON? {
         
-        guard let scheme = baseURL.scheme,
-            let host = baseURL.host,
-            let portNumber = baseURL.port else {
-                return nil
+        guard let scheme = baseURL.scheme, let host = baseURL.host else {
+            return nil
         }
-        let port = Int16(portNumber)
         
         var requestOptions: [ClientRequest.Options] = []
         
         requestOptions.append(.schema("\(scheme)"))
         requestOptions.append(.hostname("\(host)"))
-        requestOptions.append(.port(port))
+        
+        if let portNumber = baseURL.port {
+            let port = Int16(portNumber)
+            requestOptions.append(.port(port))
+        }
         requestOptions.append(.method("\(method.stringValue)"))
         requestOptions.append(.path("\(path)"))
         
