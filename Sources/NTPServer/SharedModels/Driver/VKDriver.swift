@@ -10,7 +10,7 @@ import Foundation
 
 class VKDriver: SocialDriver {
     
-    func auth(with credentials: OAuthCredentials, completion: (AuthResult) -> Void) {
+    func auth(with credentials: OAuthCredentials, completion: (AuthResult<OAuthToken>) -> Void) {
         
         let code = credentials.stringValue
         let redirectURI = credentials.redirectURI
@@ -32,7 +32,7 @@ class VKDriver: SocialDriver {
         let timeInterval = json["expires_in"].doubleValue
         let userId = json["user_id"].stringValue
         
-        let accessToken = AccessToken(string: tokenString, expiresIn: timeInterval, userId: userId)
+        let accessToken = OAuthToken(string: tokenString, expiresIn: timeInterval, userId: userId)
         completion(.success(token: accessToken))
     }
     

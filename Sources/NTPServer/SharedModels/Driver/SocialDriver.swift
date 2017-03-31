@@ -6,7 +6,7 @@
 //
 //
 
-typealias AuthCompletion = (AuthResult) -> Void
+typealias AuthCompletion = (AuthResult<OAuthToken>) -> Void
 typealias PostsCompletion = ([SocialPost]) -> Void
 
 typealias SocialGroup = String
@@ -15,6 +15,11 @@ typealias SocialPost = String
 enum AuthError {
     case invalidCredentials
     case internalError
+}
+
+enum AuthResult <T> {
+    case success(token: T)
+    case error(AuthError)
 }
 
 protocol SocialDriver {

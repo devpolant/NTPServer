@@ -2,19 +2,19 @@
 //  AccessToken.swift
 //  NTPServer
 //
-//  Created by Anton Poltoratskyi on 31.03.17.
+//  Created by Anton Poltoratskyi on 30.03.17.
 //
 //
 
 
-/// Used in application requests
-struct AccessToken {
+/// Used only in OAuth
+struct OAuthToken {
     
     var tokenString: String
     var expiresIn: Double
-    var userId: Int
+    var userId: String
     
-    init(string: String, expiresIn timeInterval: Double, userId: Int) {
+    init(string: String, expiresIn timeInterval: Double, userId: String) {
         self.tokenString = string
         self.expiresIn = timeInterval
         self.userId = userId
@@ -23,7 +23,7 @@ struct AccessToken {
 
 // MARK: - JSON Convertation
 
-extension AccessToken {
+extension OAuthToken {
     
     var dictionaryValue: [String: Any] {
         return [

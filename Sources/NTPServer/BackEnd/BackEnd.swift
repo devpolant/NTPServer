@@ -20,7 +20,8 @@ class BackEnd {
         let router = Router()
         router.post("/", middleware: BodyParser())
         
-        router.post("/signup", handler: self.signUpUser)
+        router.post("/auth/signup", handler: self.signUpUser)
+        router.post("/auth/login", handler: self.loginUser)
         
         return router
     }()
@@ -63,9 +64,11 @@ class BackEnd {
         
         // Save user
         
+        // TODO: check if email already exists
+        
         do {
             let userId = try DBManager.shared.save(user: user, to: db, on: connection)
-            user.id = String(userId)
+            user.id = userId
         } catch {
             let errorMessage = "Error while saving user"
             try response.internalServerError(message: errorMessage).end()
@@ -80,7 +83,7 @@ class BackEnd {
                                 userId: userId)
         
         do {
-            try DBManager.shared.addToken(token: token, to: db, on: connection)
+            try DBManager.shared.addToken(token: token, destination: .app, to: db, on: connection)
         } catch {
             let errorMessage = "Error while saving user access token"
             try response.internalServerError(message: errorMessage).end()
@@ -126,8 +129,8 @@ class BackEnd {
                                 expiresIn: 0,
                                 userId: user.id!)
         do {
-            try DBManager.shared.deleteExpiredTokens()
-            try DBManager.shared.addToken(token: token)
+            try DBManager.shared.deleteExpiredTokens(for: user, destination: .app, from: db, on: connection)
+            try DBManager.shared.addToken(token: token, destination: .app, to: db, on: connection)
         } catch {
             let errorMessage = "Error while updating user token"
             try response.internalServerError(message: errorMessage).end()
@@ -153,11 +156,10 @@ class BackEnd {
         let code = fields["code"]!
         let redirectURI = fields["redirect_uri"]!
         
-        let inputCredentials = OAuthCredentials(stringValue: code,
-                                                  redirectURI: redirectURI)
+        let credentials = OAuthCredentials(stringValue: code, redirectURI: redirectURI)
         
         var json: JSON?
-        driver.auth(with: inputCredentials) { result in
+        driver.auth(with: credentials) { result in
             switch result {
             case .success(let token):
                 json = JSON(["access_token": token.tokenString,

@@ -13,9 +13,9 @@ class MySQLConnector {
     static func connectToDatabase() throws -> (Database, Connection) {
         let mysql = try Database(
             host: "localhost",
-            user: "db_username",
-            password: "db_password",
-            database: "db_name"
+            user: "root",
+            password: "root",
+            database: "ntp_database"
         )
         let connection = try mysql.makeConnection()
         return (mysql, connection)
