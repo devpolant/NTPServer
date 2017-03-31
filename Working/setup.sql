@@ -47,3 +47,4 @@ INSERT INTO `categories` (`id`, `name`) VALUES (1, 'Infinite Feed', 1);
 
 ALTER TABLE `users` MODIFY `password` VARCHAR(128) NOT NULL;
 ALTER TABLE `users` MODIFY `salt` VARCHAR(128) NOT NULL;
+ALTER TABLE `users` ADD COLUMN `oauth_token` VARCHAR(128);

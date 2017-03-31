@@ -85,7 +85,7 @@ class BackEnd {
                                 userId: userId)
         
         do {
-            try DBManager.shared.addToken(token: token, destination: .app, to: db, on: connection)
+            try DBManager.shared.addToken(token, destination: .app, to: db, on: connection)
         } catch {
             let errorMessage = "Error while saving user access token"
             try response.internalServerError(message: errorMessage).end()
@@ -132,7 +132,7 @@ class BackEnd {
                                 userId: user.id!)
         do {
             try DBManager.shared.deleteExpiredTokens(for: user, destination: .app, from: db, on: connection)
-            try DBManager.shared.addToken(token: token, destination: .app, to: db, on: connection)
+            try DBManager.shared.addToken(token, destination: .app, to: db, on: connection)
         } catch {
             let errorMessage = "Error while updating user token"
             try response.internalServerError(message: errorMessage).end()
@@ -149,14 +149,17 @@ class BackEnd {
     
     // MARK: OAuth
     
-    func authSocialUser(request: RouterRequest, response: RouterResponse, next: () -> Void) {
+    func authSocialUser(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         
-        guard let fields = request.getPost(fields: ["code", "redirect_uri"]) else {
+        let requiredFields = ["user_id", "code", "redirect_uri"]
+        
+        guard let fields = request.getPost(fields: requiredFields) else {
             response.status(.badRequest).send("'code' or 'redirect_uri' parameter missed")
             return
         }
         let code = fields["code"]!
         let redirectURI = fields["redirect_uri"]!
+        let userId = Int(fields["user_id"]!)!
         
         let credentials = OAuthCredentials(stringValue: code, redirectURI: redirectURI)
         
@@ -164,8 +167,18 @@ class BackEnd {
         driver.auth(with: credentials) { result in
             switch result {
             case .success(let token):
-                json = JSON(["access_token": token.tokenString,
-                             "userId": token.userId])
+                
+                do {
+                    let (db, connection) = try MySQLConnector.connectToDatabase()
+                    try DBManager.shared.setOAuthToken(token, forUserWithId: userId, to: db, on: connection)
+                } catch {
+                    let errorMessage = "Error while set user oauth token"
+                    try? response.internalServerError(message: errorMessage).end()
+                    return
+                }
+                
+                json = JSON(["error": false,
+                             "message": "Authorized"])
             case .error( _):
                 break
             }

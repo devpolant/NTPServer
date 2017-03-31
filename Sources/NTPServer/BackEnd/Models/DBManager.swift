@@ -67,9 +67,18 @@ class DBManager {
     
     // MARK: - Tokens
     
-    func addToken(token: AccessToken, destination: TokenDestination, to database: Database, on connection: Connection) throws {
+    func addToken(_ token: AccessToken, destination: TokenDestination, to database: Database, on connection: Connection) throws {
         try database.execute("INSERT INTO `tokens` (token_string, expires_in, user_id, token_destination) VALUES (?, ?, ?, ?);",
                              [token.tokenString, token.expiresIn, token.userId, destination.identifier],
+                             connection)
+    }
+    
+    func setOAuthToken(_ token: OAuthToken, forUserWithId userId: Int, to database: Database, on connection: Connection) throws {
+        
+        // TODO: update this logic
+        
+        try database.execute("UPDATE `users` SET oauth_token = ? WHERE id = ?;",
+                             [token.tokenString, userId],
                              connection)
     }
     
