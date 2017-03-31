@@ -10,7 +10,7 @@ typealias AuthCompletion = (AuthResult<OAuthToken>) -> Void
 typealias PostsCompletion = ([SocialPost]) -> Void
 
 typealias SocialGroup = String
-typealias SocialPost = String
+typealias SocialPost = Post
 
 enum AuthError {
     case invalidCredentials
@@ -24,5 +24,5 @@ enum AuthResult <T> {
 
 protocol SocialDriver {
     func auth(with credentials: OAuthCredentials, completion: AuthCompletion)
-    func loadPosts(for group: SocialGroup, offset: Int, count: Int, completion: PostsCompletion)
+    func loadPosts(for group: SocialGroup, offset: Int, count: Int, token: String, completion: PostsCompletion)
 }

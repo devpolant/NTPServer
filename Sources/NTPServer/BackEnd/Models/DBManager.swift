@@ -82,6 +82,21 @@ class DBManager {
                              connection)
     }
     
+    func getOAuthTokenForUser(with userId: Int, to database: Database, on connection: Connection) throws -> String? {
+        
+        // TODO: update this logic
+        
+        let query = "SELECT * FROM `users` WHERE `id` = ?;"
+        let users = try database.execute(query, [userId], connection)
+        
+        guard let user = users.first else {
+            throw DBError.userNotFound
+        }
+        return user["oauth_token"]?.string
+    }
+    
+    
+    
     func deleteExpiredTokens(for user: User, destination: TokenDestination, from database: Database, on connection: Connection) throws {
         // Delete all tokens for user at now.
         

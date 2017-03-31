@@ -8,6 +8,9 @@
 
 import Foundation
 
+private let baseVKApiURL = URL(string: "https://api.vk.com")!
+private let vkApiVersion = "5.63"
+
 class VKDriver: SocialDriver {
     
     func auth(with credentials: OAuthCredentials, completion: (AuthResult<OAuthToken>) -> Void) {
@@ -36,7 +39,37 @@ class VKDriver: SocialDriver {
         completion(.success(token: accessToken))
     }
     
-    func loadPosts(for group: SocialGroup, offset: Int, count: Int, completion: ([SocialPost]) -> Void) {
+    func loadPosts(for group: SocialGroup, offset: Int, count: Int, token: String, completion: ([SocialPost]) -> Void) {
         
+        let parameters: [String: Any] = [
+            "domain": group,
+//            "owner_id": -1,
+            "offset": offset,
+            "count": count,
+            "filter": "owner",
+            "extended": true,
+            "access_token": token,
+            "v": vkApiVersion
+        ]
+        
+        let json = HTTPManager.shared.get("/method/wall.get", relatedTo: baseVKApiURL, parameters: parameters)
+        
+        guard let response = json?["response"] else {
+            completion([])
+            return
+        }
+        
+        guard let posts = response["items"].array else {
+            completion([])
+            return
+        }
+        
+        let parsedPosts = posts.map { jsonObject -> SocialPost in
+            let id = jsonObject["id"].stringValue
+            let timestamp = jsonObject["date"].intValue
+            let text = jsonObject["text"].stringValue
+            return Post(id: id, timestamp: timestamp, text: text)
+        }
+        completion(parsedPosts)
     }
 }

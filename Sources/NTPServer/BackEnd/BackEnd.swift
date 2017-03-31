@@ -25,18 +25,19 @@ class BackEnd {
         
         router.post("/oauth/vk", handler: self.authSocialUser)
         
+        router.post("/posts/list", handler: self.getWallPosts)
+        
         return router
     }()
     
     let driver: SocialDriver = VKDriver()
     
     
-    // MARK: - Routes
-    
-    // MARK: Auth
+    // MARK: - Auth
     
     func signUpUser(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
-     
+        defer { next() }
+        
         let requiredFields = ["login", "email", "password"]
         
         guard let fields = request.getPost(fields: requiredFields) else {
@@ -102,6 +103,8 @@ class BackEnd {
     }
     
     func loginUser(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
+        
         let requiredFields = ["login", "password"]
         
         guard let fields = request.getPost(fields: requiredFields) else {
@@ -150,11 +153,12 @@ class BackEnd {
     // MARK: OAuth
     
     func authSocialUser(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
         
         let requiredFields = ["user_id", "code", "redirect_uri"]
         
         guard let fields = request.getPost(fields: requiredFields) else {
-            response.status(.badRequest).send("'code' or 'redirect_uri' parameter missed")
+            try response.badRequest(expected: requiredFields).end()
             return
         }
         let code = fields["code"]!
@@ -185,5 +189,49 @@ class BackEnd {
         }
         response.send(json: json ?? JSON(["error": true]))
     }
+    
+    
+    // MARK: - Posts
+    
+    func getWallPosts(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
+        
+        let requiredFields = ["count", "offset", "group_domain", "user_id"]
+        
+        guard let fields = request.getPost(fields: requiredFields) else {
+            try response.badRequest(expected: requiredFields).end()
+            return
+        }
+        let group = fields["group_domain"]!
+        let count = Int(fields["count"]!)!
+        let offset = Int(fields["offset"]!)!
+        let userId = Int(fields["user_id"]!)!
+        
+        var oAuthToken: String?
+        do {
+            let (db, connection) = try MySQLConnector.connectToDatabase()
+            oAuthToken = try DBManager.shared.getOAuthTokenForUser(with: userId, to: db, on: connection)
+        } catch {
+            let errorMessage = "Error while loading posts"
+            try? response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        guard let token = oAuthToken else { return }
+        
+        var posts = [[String: Any]]()
+        driver.loadPosts(for: group, offset: offset, count: count, token: token) { socialPosts in
+            
+            posts.append(contentsOf: socialPosts.map { post -> [String: Any] in
+                post.dictionaryValue
+            })
+        }
+        
+        response.send(json: [
+                "error": false,
+                "posts": posts
+            ])
+    }
+    
     
 }
