@@ -23,6 +23,8 @@ class BackEnd {
         router.post("/auth/signup", handler: self.signUpUser)
         router.post("/auth/login", handler: self.loginUser)
         
+        router.post("/oauth/vk", handler: self.authSocialUser)
+        
         return router
     }()
     
@@ -145,7 +147,7 @@ class BackEnd {
     }
     
     
-    // MARK: Social Auth
+    // MARK: OAuth
     
     func authSocialUser(request: RouterRequest, response: RouterResponse, next: () -> Void) {
         
