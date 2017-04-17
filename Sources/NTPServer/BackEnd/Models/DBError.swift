@@ -13,4 +13,5 @@ enum DBError: Swift.Error {
     case tokenNotFound(destination: TokenDestination)
     case vendorTokenNotFound
     case appNotFound
+    case categoryNotFound
 }

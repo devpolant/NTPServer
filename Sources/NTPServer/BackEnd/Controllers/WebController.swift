@@ -216,7 +216,7 @@ class WebController: APIController {
         
         var apps: [App]
         do {
-            apps = try DBVendorProvider.shared.apps(forVendorWithId: vendor.id!, from: db, on: connection)
+            apps = try DBVendorProvider.shared.fetchApps(forVendorWithId: vendor.id!, from: db, on: connection)
         } catch {
             let errorMessage = "Error while loading vendor apps"
             try response.internalServerError(message: errorMessage).end()
@@ -253,7 +253,7 @@ class WebController: APIController {
         
         var app: App
         do {
-            app = try DBVendorProvider.shared.app(with: appId, from: db, on: connection)
+            app = try DBVendorProvider.shared.fetchApp(with: appId, from: db, on: connection)
         } catch {
             let errorMessage = "Error while loading app with id=\(appId)"
             try response.internalServerError(message: errorMessage).end()
@@ -269,14 +269,162 @@ class WebController: APIController {
     
     func createApp(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         
+        let requiredFields = ["token", "name", "location", "social_group"]
+        guard let fields = request.getPost(fields: requiredFields) else {
+            try response.badRequest(expected: requiredFields).end()
+            return
+        }
+        
+        let token = fields["token"]!
+        let (db, connection) = try MySQLConnector.connectToDatabase()
+        try db.execute("SET autocommit=0;", [], connection)
+        guard let vendor = try? DBVendorProvider.shared.fetchVendor(withToken: token, from: db, on: connection) else {
+            return
+        }
+        
+        let name = fields["name"]!
+        let location = fields["location"]!
+        let socialGroupToParse = fields["social_group"]!
+        
+        let app = App(name: name, location: location, vendorId: vendor.id!, status: AppStatus.active.stringValue)
+        do {
+            let appId = try DBVendorProvider.shared.insertApp(app, to: db, on: connection)
+            app.id = appId
+        } catch {
+            let errorMessage = "Error while creating app for vendor with id=\(vendor.id!)"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        // TODO: customize category name
+        let category = Category(name: name,
+                                appId: app.id!,
+                                socialGroupURL: socialGroupToParse,
+                                socialNetworkId: SocialNetwork.vk.identifier)
+        do {
+            try DBVendorProvider.shared.insertCategory(category, to: db, on: connection)
+        } catch {
+            let errorMessage = "Error while creating category for app with id=\(app.id!)"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        try db.execute("COMMIT;", [], connection)
+        
+        let result: [String: Any] = [
+            "error": false,
+            "created_app_id": app.id!
+        ]
+        response.send(json: result)
     }
     
     func updateApp(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         
+        guard let appId = request.queryParameters["id"]?.int else {
+            try response.badRequest(expected: ["id"]).end()
+            return
+        }
+        
+        let requiredFields = ["token", "name", "location", "social_group"]
+        guard let fields = request.getPost(fields: requiredFields) else {
+            try response.badRequest(expected: requiredFields).end()
+            return
+        }
+        
+        let token = fields["token"]!
+        let (db, connection) = try MySQLConnector.connectToDatabase()
+        try db.execute("SET autocommit=0;", [], connection)
+        guard (try? DBVendorProvider.shared.fetchVendor(withToken: token, from: db, on: connection)) != nil else {
+            return
+        }
+        
+        // Update App
+        
+        let app: App
+        do {
+            app = try DBVendorProvider.shared.fetchApp(with: appId, from: db, on: connection)
+        } catch {
+            let errorMessage = "Error while fetching app with id=\(appId)"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        let name = fields["name"]!
+        let location = fields["location"]!
+        let socialGroupToParse = fields["social_group"]!
+        
+        app.name = name
+        app.location = location
+        
+        do {
+            try DBVendorProvider.shared.updateApp(app, in: db, on: connection)
+        } catch {
+            let errorMessage = "Error while updating app with id=\(appId)"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        // Update category
+        
+        let category: Category
+        do {
+            category = try DBVendorProvider.shared.firstCategory(forApp: appId, from: db, on: connection)
+        } catch {
+            let errorMessage = "Error while fetching category for app with id=\(appId), description=\(error)"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        category.socialGroupURL = socialGroupToParse
+        do {
+            try DBVendorProvider.shared.updateCategory(category, in: db, on: connection)
+        } catch {
+            let errorMessage = "Error while updating category with id=\(category.id!), description=\(error)"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        try db.execute("COMMIT;", [], connection)
+        
+        let result: [String: Any] = [
+            "error": false
+        ]
+        response.send(json: result)
     }
     
     func deleteApp(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        guard let appId = request.queryParameters["id"]?.int else {
+            try response.badRequest(expected: ["id"]).end()
+            return
+        }
         
+        let requiredFields = ["token"]
+        guard let fields = request.getPost(fields: requiredFields) else {
+            try response.badRequest(expected: requiredFields).end()
+            return
+        }
+        
+        let token = fields["token"]!
+        let (db, connection) = try MySQLConnector.connectToDatabase()
+        try db.execute("SET autocommit=0;", [], connection)
+        guard let _ = try? DBVendorProvider.shared.fetchVendor(withToken: token, from: db, on: connection) else {
+            return
+        }
+        
+        do {
+            try DBVendorProvider.shared.deleteApp(with: appId, from: db, on: connection)
+        } catch {
+            let errorMessage = "Error while deleting app with id=\(appId), description=\(error)"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        try db.execute("COMMIT;", [], connection)
+        
+        let result: [String: Any] = [
+            "error": false,
+            "deleted_app_id": appId
+        ]
+        response.send(json: result)
     }
     
 }

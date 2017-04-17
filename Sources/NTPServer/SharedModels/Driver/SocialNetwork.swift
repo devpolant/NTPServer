@@ -8,13 +8,14 @@
 
 import Foundation
 
-enum SocialNetwork {
-    case vk
+enum SocialNetwork: Int {
+    case vk = 1
+    
+    init(identifier: Int) {
+        self.init(rawValue: identifier)!
+    }
     
     var identifier: Int {
-        switch self {
-        case .vk:
-            return 1
-        }
+        return rawValue
     }
 }

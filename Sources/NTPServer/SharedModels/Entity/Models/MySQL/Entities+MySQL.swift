@@ -57,3 +57,15 @@ extension App: MySQLInitializable {
     }
 }
 
+extension Category: MySQLInitializable {
+    convenience init(with node: [String : Node]) {
+        let id = node["id"]?.int
+        let name = node["name"]!.string!
+        let appId = node["app_id"]!.int!
+        let socialGroupURL = node["social_group"]!.string!
+        let socialNetworkId = node["social_network_id"]!.int!
+        self.init(id: id, name: name, appId: appId, socialGroupURL: socialGroupURL, socialNetworkId: socialNetworkId)
+    }
+}
+
+

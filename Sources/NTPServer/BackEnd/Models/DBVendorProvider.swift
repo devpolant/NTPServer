@@ -20,7 +20,6 @@ class DBVendorProvider {
     
     // MARK: Save
     
-    /// Returns id of created user
     @discardableResult
     func insertVendor(_ vendor: Vendor, to database: Database, on connection: Connection) throws -> Int {
         
@@ -97,7 +96,40 @@ class DBVendorProvider {
     
     // MARK: - Apps
     
-    func apps(forVendorWithId vendorId: Int, from database: Database, on connection: Connection) throws -> [App] {
+    // MARK: Save
+    
+    @discardableResult
+    func insertApp(_ app: App, to database: Database, on connection: Connection) throws -> Int {
+        let insertQuery = "INSERT INTO `\(App.entity)` (name, location, vendor_id, status) VALUES (?, ?, ?, ?);"
+        let arguments: [NodeRepresentable] = [app.name, app.location, app.vendorId, app.status.stringValue]
+        // Insert
+        try database.execute(insertQuery, arguments, connection)
+        // Fetch inserted id
+        return try self.fetchApp(vendorId: app.vendorId, appName: app.name, from: database, on: connection).id!
+    }
+    
+    func updateApp(_ app: App, in database: Database, on connection: Connection) throws {
+        guard let appId = app.id else {
+            throw DBError.identifierAbsent(entityName: App.entity)
+        }
+        let updateQuery = "UPDATE `\(App.entity)` SET `name` = ? AND `location` = ? AND `vendor_id` = ? AND `status` = ? WHERE `id` = ?"
+        let arguments: [NodeRepresentable] = [app.name, app.location, app.vendorId, app.status.stringValue, appId]
+        try database.execute(updateQuery, arguments, connection)
+    }
+    
+    func deleteApp(with id: Int, from database: Database, on connection: Connection) throws {
+        
+        // TODO: handle errors
+        try deleteCategories(forApp: id, from: database, on: connection)
+        
+        let deleteAppQuery = "DELETE FROM `\(App.entity)` WHERE `id` = ?"
+        let deleteAppArguments: [NodeRepresentable] = [id]
+        try database.execute(deleteAppQuery, deleteAppArguments, connection)
+    }
+    
+    // MARK: Fetch
+    
+    func fetchApps(forVendorWithId vendorId: Int, from database: Database, on connection: Connection) throws -> [App] {
         let query = "SELECT * FROM `\(App.entity)` WHERE `vendor_id` = ?;"
         let arguments: [NodeRepresentable] = [vendorId]
         
@@ -105,7 +137,7 @@ class DBVendorProvider {
         return apps.map { App(with: $0) }
     }
     
-    func app(with appId: Int, from database: Database, on connection: Connection) throws -> App {
+    func fetchApp(with appId: Int, from database: Database, on connection: Connection) throws -> App {
         let query = "SELECT * FROM `\(App.entity)` WHERE `id` = ?;"
         let arguments: [NodeRepresentable] = [appId]
         
@@ -116,7 +148,7 @@ class DBVendorProvider {
         return App(with: appNode)
     }
     
-    fileprivate func app(vendorId: Int, appName: String, from database: Database, on connection: Connection) throws -> App {
+    fileprivate func fetchApp(vendorId: Int, appName: String, from database: Database, on connection: Connection) throws -> App {
         let query = "SELECT * FROM `\(App.entity)` WHERE `vendor_id` = ? AND `name` = ?;"
         let arguments: [NodeRepresentable] = [vendorId, appName]
         
@@ -127,28 +159,65 @@ class DBVendorProvider {
         return App(with: appNode)
     }
     
-    func insertApp(_ app: App, to database: Database, on connection: Connection) throws -> Int {
-        let insertQuery = "INSERT INTO `\(App.entity)` (name, location, vendor_id, status) VALUES (?, ?, ?, ?);"
-        let arguments: [NodeRepresentable] = [app.name, app.location, app.vendorId, app.status.stringValue]
+    
+    // MARK: - Category
+    
+    // MARK: Save
+    
+    @discardableResult
+    func insertCategory(_ category: Category, to database: Database, on connection: Connection) throws -> Int {
+        let insertQuery = "INSERT INTO `\(Category.entity)` (name, app_id, social_group, social_network_id) VALUES (?, ?, ?, ?);"
+        let arguments: [NodeRepresentable] = [category.name, category.appId, category.socialGroupURL, category.socialNetwork.identifier]
         // Insert
         try database.execute(insertQuery, arguments, connection)
         // Fetch inserted id
-        return try self.app(vendorId: app.vendorId, appName: app.name, from: database, on: connection).id!
+        return try self.firstCategory(forApp: category.appId, from: database, on: connection).id!
     }
     
-    func updateApp(_ app: App, to database: Database, on connection: Connection) throws {
-        guard let appId = app.id else {
-            throw DBError.identifierAbsent(entityName: App.entity)
+    func updateCategory(_ category: Category, in database: Database, on connection: Connection) throws {
+        guard let categoryId = category.id else {
+            throw DBError.identifierAbsent(entityName: Category.entity)
         }
-        let insertQuery = "UPDATE `\(App.entity)` SET `name` = ? AND `location` = ? AND `vendor_id` = ? AND `status` = ? WHERE `id` = ?"
-        let arguments: [NodeRepresentable] = [app.name, app.location, app.vendorId, app.status.stringValue, appId]
-        try database.execute(insertQuery, arguments, connection)
+        let updateQuery = "UPDATE `\(Category.entity)` SET `name` = ? AND `app_id` = ? AND `social_group` = ? AND `social_network_id` = ? WHERE `id` = ?"
+        let arguments: [NodeRepresentable] =
+            [category.name, category.appId, category.socialGroupURL, category.socialNetwork.identifier, categoryId]
+        try database.execute(updateQuery, arguments, connection)
     }
     
-    func deleteApp(with id: Int, from database: Database, on connection: Connection) throws {
-        let deleteQuery = "DELETE FROM `\(App.entity)` WHERE `id` = ?"
+    func deleteCategory(with id: Int, from database: Database, on connection: Connection) throws {
+        let deleteQuery = "DELETE FROM `\(Category.entity)` WHERE `id` = ?"
         let arguments: [NodeRepresentable] = [id]
         try database.execute(deleteQuery, arguments, connection)
     }
     
+    func deleteCategories(forApp appId: Int, from database: Database, on connection: Connection) throws {
+        let deleteQuery = "DELETE FROM `\(Category.entity)` WHERE `app_id` = ?"
+        let arguments: [NodeRepresentable] = [appId]
+        try database.execute(deleteQuery, arguments, connection)
+    }
+    
+    // MARK: Fetch
+    
+    /// Temporary method
+    func firstCategory(forApp appId: Int, from database: Database, on connection: Connection) throws -> Category {
+        let query = "SELECT * FROM `\(Category.entity)` WHERE `app_id` = ?;"
+        let arguments: [NodeRepresentable] = [appId]
+        
+        let categories = try database.execute(query, arguments, connection)
+        guard let categoryNode = categories.first else {
+            throw DBError.categoryNotFound
+        }
+        return Category(with: categoryNode)
+    }
+    
+    func fetchCategory(with id: Int, from database: Database, on connection: Connection) throws -> Category {
+        let query = "SELECT * FROM `\(Category.entity)` WHERE `id` = ?;"
+        let arguments: [NodeRepresentable] = [id]
+        
+        let categories = try database.execute(query, arguments, connection)
+        guard let categoryNode = categories.first else {
+            throw DBError.categoryNotFound
+        }
+        return Category(with: categoryNode)
+    }
 }
