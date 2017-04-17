@@ -121,7 +121,8 @@ class WebAPIController: APIController {
         // Update vendor token
         
         do {
-            try DBVendorProvider.shared.updateVendor(vendor, in: db, on: connection)
+            // FIXME: update works incorrect now
+//            try DBVendorProvider.shared.updateVendor(vendor, in: db, on: connection)
         } catch {
             let errorMessage = "Error while updating Vendor's token"
             try response.internalServerError(message: errorMessage).end()

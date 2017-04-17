@@ -63,7 +63,7 @@
           </label>
         </div>
         <!-- <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button> -->
-        <a href="../dashboard" class="btn btn-info" role="button">Sign Up</a>
+        <input type="button" id="submit_button" class="btn btn-info" value="Sign Up" />
       </form>
 
     </div> <!-- /container -->
@@ -80,6 +80,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="/static/js/bootstrap/bootstrap.min.js"></script>
-
+    <!-- JS Files -->
+    <script src="/static/js/pages/signup.js" type="text/javascript"></script>
   </body>
 </html>

@@ -101,7 +101,7 @@ class FrontEndAPIController: APIController {
             return
         }
         
-        guard let signupResult = HTTPManager.shared.post("/signup",
+        guard let signupResult = HTTPManager.shared.post("/web/vendor/auth/signup",
                                                          relatedTo: baseApiURL,
                                                          fields: fields)?.dictionaryObject else {
                                                             return

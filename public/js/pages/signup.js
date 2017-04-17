@@ -1,18 +1,20 @@
-function getCookie(name) {
-    return localStorage.getItem("access_token");
-}
-
 $(document).ready(function () {
 
-    $("#login_submit").on("click", function () {
-
-        var email_value = $("#email").val();
-        var password_value = $("#password").val();
+    $("#submit_button").on("click", function () {
+        var login_value = $("#inputLogin").val();
+        var email_value = $("#inputEmail").val();
+        var password_value = $("#inputPassword").val();
+        var confirm_password_value = $("#confirmPassword").val();
 
         $.ajax({
-            url:"http://localhost:8090/auth/login",
+            url:"http://localhost:8090/auth/signup",
             type:"POST",
-            data:{ "email" : email_value, "password" : password_value },
+            data:{ 
+                "login": login_value, 
+                "email" : email_value, 
+                "password" : password_value, 
+                "confirm_password": confirm_password_value 
+            },
             success:function(data){
                 try {
                     if(!data.error) {

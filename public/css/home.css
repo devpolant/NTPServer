@@ -97,7 +97,7 @@ img {
 	color: #000;
 }
 
-.subscribe input[type="submit"] {
+.subscribe input[type="button"] {
 	background: #ae2c52;
 	border: none;
 	color: #fff;
