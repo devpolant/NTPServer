@@ -24,7 +24,7 @@ enum TokenDestination {
         case .vk:
             return SocialNetwork.vk.identifier
         case .app:
-            return Int.max
+            return Int(Int32.max)
         }
     }
 }
@@ -76,7 +76,7 @@ class DBUsersProvider {
                                      from: database,
                                      on: connection)
         
-        try database.execute("INSERT INTO `tokens` (token_string, expires_in, user_id, token_destination) VALUES (?, ?, ?, ?);",
+        try database.execute("INSERT INTO `user_tokens` (token_string, expires_in, user_id, token_destination) VALUES (?, ?, ?, ?);",
                              [token.tokenString, token.expiresIn, token.userId, destination.identifier],
                              connection)
     }
@@ -85,7 +85,7 @@ class DBUsersProvider {
         
         let accessToken = AccessToken(string: token.tokenString,
                                       expiresIn: token.expiresIn,
-                                      userId: Int(token.userId)!)
+                                      userId: userId)
         
         try self.addToken(accessToken, destination: .vk, to: database, on: connection)
     }
