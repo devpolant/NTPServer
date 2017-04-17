@@ -19,7 +19,8 @@ class FrontEnd {
         
         let router = Router()
     
-        // Routes here
+        let apiController = FrontEndAPIController()
+        router.all(middleware: apiController.router)
         
         return router
     }()
