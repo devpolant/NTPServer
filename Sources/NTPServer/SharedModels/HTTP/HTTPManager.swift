@@ -61,7 +61,6 @@ class HTTPManager {
         
         let request = HTTP.request(requestOptions) { clientResponse in
             if let response = clientResponse {
-                guard response.statusCode == .OK else { return }
                 _ = try? response.readAllData(into: &responseBody)
             }
         }
@@ -69,6 +68,9 @@ class HTTPManager {
         // Send the request
         request.end(requestBody)
         
-        return !responseBody.isEmpty ? JSON(data: responseBody) : nil
+        if !responseBody.isEmpty {
+            return JSON(data: responseBody)
+        }
+        return nil
     }
 }

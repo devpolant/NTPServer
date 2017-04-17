@@ -12,7 +12,7 @@ import LoggerAPI
 extension RouterResponse {
 
     func badRequest(message: String) -> RouterResponse {
-        
+        Log.info(message)
         let error: [String: Any] = ["error": true,
                                     "message": message]
         return status(.badRequest).send(json: error)

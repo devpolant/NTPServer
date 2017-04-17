@@ -102,6 +102,8 @@ class WebAPIController: APIController {
         let password = fields["password"]!
         
         guard let vendor = try? DBVendorProvider.shared.fetchVendor(withEmail: email, from: db, on: connection) else {
+            let errorMessage = "Vendor not found"
+            try response.badRequest(message: errorMessage).end()
             return
         }
         

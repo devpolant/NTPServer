@@ -68,6 +68,12 @@
       "version": "1.7.1"
     },
     {
+      "package": "KituraCORS",
+      "reason": null,
+      "repositoryURL": "https://github.com/IBM-Swift/Kitura-CORS.git",
+      "version": "1.7.0"
+    },
+    {
       "package": "KituraStencil",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/Kitura-StencilTemplateEngine.git",
