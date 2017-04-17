@@ -48,6 +48,7 @@ CREATE TABLE `social_networks` (
 CREATE TABLE `categories` (
 	`id` INT AUTO_INCREMENT PRIMARY KEY,
 	`name` VARCHAR(64) NOT NULL,
+	`social_group` VARCHAR(128) NOT NULL,
 	`app_id` INT NOT NULL,
 	`social_network_id` INT NOT NULL
 );

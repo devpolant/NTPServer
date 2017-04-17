@@ -9,12 +9,6 @@
 import Foundation
 import MySQL
 
-enum DBError: Swift.Error {
-    case couldNotSave
-    case userNotFound
-    case tokenNotFound(destination: TokenDestination)
-}
-
 enum TokenDestination {
     case app
     case vk
@@ -37,52 +31,52 @@ class DBUsersProvider {
     
     // MARK: - Users
     
+    // MARK: Save
+    
     /// Returns id of created user
+    @discardableResult
     func save(user: User, to database: Database, on connection: Connection) throws -> Int {
-        try database.execute("INSERT INTO `users` (login, email, password, salt) VALUES (?, ?, ?, ?);",
+        try database.execute("INSERT INTO `\(User.entity)` (login, email, password, salt) VALUES (?, ?, ?, ?);",
                              [user.login, user.email, user.password, user.salt],
                              connection)
-        // FIXME: return id in another way
-        
         return try fetchUser(by: user.login, from: database, on: connection).id!
     }
     
+    // MARK: Fetch
+    
     func fetchUser(by login: String, from database: Database, on connection: Connection) throws -> User {
         
-        let query = "SELECT * FROM `users` WHERE `login` = ?;"
-        let users = try database.execute(query, [login], connection)
+        let query = "SELECT * FROM `\(User.entity)` WHERE `login` = ?;"
+        let arguments: [NodeRepresentable] = [login]
         
-        guard let user = users.first else {
-            throw DBError.userNotFound
+        let users = try database.execute(query, arguments, connection)
+        guard let userNode = users.first else {
+            throw DBError.entityNotFound(entityName: User.entity)
         }
-        
-        var userDictionary = [String: Any]()
-        userDictionary["id"] = user["id"]?.int
-        userDictionary["login"] = user["login"]?.string
-        userDictionary["email"] = user["email"]?.string
-        userDictionary["password"] = user["password"]?.string
-        userDictionary["salt"] = user["salt"]?.string
-        
-        return User(with: userDictionary)
+        return User(with: userNode)
     }
+    
     
     // MARK: - Tokens
     
     func addToken(_ token: AccessToken, destination: TokenDestination, to database: Database, on connection: Connection) throws {
         
-        // Delete current tokens and add new token for appropriate destination.
+        // Delete current tokens and add new token for appropriate destination ('app' or 'vk').
         try self.deleteExpiredTokens(forUserWithId: token.userId.stringValue,
                                      destination: destination,
                                      from: database,
                                      on: connection)
         
-        try database.execute("INSERT INTO `user_tokens` (token_string, expires_in, user_id, token_destination) VALUES (?, ?, ?, ?);",
-                             [token.tokenString, token.expiresIn, token.userId, destination.identifier],
-                             connection)
+        let insertQuery = "INSERT INTO `\(UserToken.entity)` (token_string, expires_in, user_id, token_destination) VALUES (?, ?, ?, ?);"
+        let arguments: [NodeRepresentable] = [token.tokenString, token.expiresIn, token.userId, destination.identifier]
+        try database.execute(insertQuery, arguments, connection)
     }
+    
+    // MARK: OAuth
     
     func setOAuthToken(_ token: OAuthToken, forUserWithId userId: Int, to database: Database, on connection: Connection) throws {
         
+        // Convert OAuth token to app token
         let accessToken = AccessToken(string: token.tokenString,
                                       expiresIn: token.expiresIn,
                                       userId: userId)
@@ -91,29 +85,32 @@ class DBUsersProvider {
     }
     
     func getOAuthTokenForUser(with userId: Int, to database: Database, on connection: Connection) throws -> String? {
-        return try findToken(forUserWithId: userId.stringValue, destination: .vk, from: database, on: connection)
+        return try token(forUserWithId: userId.stringValue, destination: .vk, from: database, on: connection)
     }
     
+    // MARK: Fetch
     
-    func findToken(forUserWithId userId: String, destination: TokenDestination, from database: Database, on connection: Connection) throws -> String?  {
+    func token(forUserWithId userId: String, destination: TokenDestination, from database: Database, on connection: Connection) throws -> String?  {
         
-        let tokens = try database.execute("SELECT * FROM `user_tokens` WHERE user_id = ? AND token_destination = ?",
-                                          [userId, destination.identifier],
-                                          connection)
+        let findQuery = "SELECT * FROM `\(UserToken.entity)` WHERE user_id = ? AND token_destination = ?"
+        let arguments: [NodeRepresentable] = [userId, destination.identifier]
         
-        
+        let tokens = try database.execute(findQuery, arguments, connection)
         guard let token = tokens.first else {
             throw DBError.tokenNotFound(destination: destination)
         }
         return token["token_string"]?.string
     }
     
+    // MARK: Delete
+    
     func deleteExpiredTokens(forUserWithId userId: String, destination: TokenDestination, from database: Database, on connection: Connection) throws {
         // Delete all tokens for user at now.
         
-        try database.execute("DELETE FROM `user_tokens` WHERE user_id = ? AND token_destination = ?",
-                             [userId, destination.identifier],
-                             connection)
+        let deleteQuery = "DELETE FROM `\(UserToken.entity)` WHERE user_id = ? AND token_destination = ?"
+        let arguments: [NodeRepresentable] = [userId, destination.identifier]
+        
+        try database.execute(deleteQuery, arguments, connection)
     }
     
 }

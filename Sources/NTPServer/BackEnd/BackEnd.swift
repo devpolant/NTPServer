@@ -27,6 +27,9 @@ class BackEnd {
         
         router.post("/posts/list", handler: self.getWallPosts)
         
+        let webController = WebController()
+        router.all("/web", middleware: webController.router)
+        
         return router
     }()
     
@@ -119,7 +122,7 @@ class BackEnd {
             return
         }
         
-        // Use saved salf from database
+        // Use saved salt from database
         let encryptedPassword = CryptoManager.shared.password(from: password,
                                                               salt: user.salt)
         

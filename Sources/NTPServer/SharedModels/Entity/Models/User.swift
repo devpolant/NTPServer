@@ -8,7 +8,7 @@
 
 import Foundation
 
-class User {
+final class User {
     
     var id: Int?
     
@@ -18,6 +18,7 @@ class User {
     var salt: String
     
     init(id: Int? = nil, login: String, email: String, password: String, salt: String) {
+        self.id = id
         self.login = login
         self.email = email
         self.password = password
@@ -31,4 +32,10 @@ class User {
         self.password = dictionary["password"] as! String
         self.salt = dictionary["salt"] as! String
     }
+}
+
+// MARK: - Entity
+
+extension User: Entity {
+    static let entity: String = "users"
 }

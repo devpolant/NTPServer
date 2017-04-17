@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Post {
+final class Post {
     var id: String
     var timestamp: Int
     var text: String
@@ -18,6 +18,12 @@ class Post {
         self.timestamp = timestamp
         self.text = text
     }
+}
+
+// MARK: - Entity
+
+extension Post: Entity {
+    static let entity: String = "posts"
 }
 
 // MARK: - JSON Convertation
