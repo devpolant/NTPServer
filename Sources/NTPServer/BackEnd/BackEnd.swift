@@ -70,7 +70,7 @@ class BackEnd {
         // TODO: check if email already exists
         
         do {
-            let userId = try DBManager.shared.save(user: user, to: db, on: connection)
+            let userId = try DBUsersProvider.shared.save(user: user, to: db, on: connection)
             user.id = userId
         } catch {
             let errorMessage = "Error while saving user"
@@ -86,7 +86,7 @@ class BackEnd {
                                 userId: userId)
         
         do {
-            try DBManager.shared.addToken(token, destination: .app, to: db, on: connection)
+            try DBUsersProvider.shared.addToken(token, destination: .app, to: db, on: connection)
         } catch {
             let errorMessage = "Error while saving user access token"
             try response.internalServerError(message: errorMessage).end()
@@ -115,7 +115,7 @@ class BackEnd {
         let password = fields["password"]!
         
         let (db, connection) = try MySQLConnector.connectToDatabase()
-        guard let user = try? DBManager.shared.fetchUser(by: login, from: db, on: connection) else {
+        guard let user = try? DBUsersProvider.shared.fetchUser(by: login, from: db, on: connection) else {
             return
         }
         
@@ -134,8 +134,8 @@ class BackEnd {
                                 expiresIn: 0,
                                 userId: user.id!)
         do {
-            try DBManager.shared.deleteExpiredTokens(for: user, destination: .app, from: db, on: connection)
-            try DBManager.shared.addToken(token, destination: .app, to: db, on: connection)
+            try DBUsersProvider.shared.deleteExpiredTokens(for: user, destination: .app, from: db, on: connection)
+            try DBUsersProvider.shared.addToken(token, destination: .app, to: db, on: connection)
         } catch {
             let errorMessage = "Error while updating user token"
             try response.internalServerError(message: errorMessage).end()
@@ -174,7 +174,7 @@ class BackEnd {
                 
                 do {
                     let (db, connection) = try MySQLConnector.connectToDatabase()
-                    try DBManager.shared.setOAuthToken(token, forUserWithId: userId, to: db, on: connection)
+                    try DBUsersProvider.shared.setOAuthToken(token, forUserWithId: userId, to: db, on: connection)
                 } catch {
                     let errorMessage = "Error while set user oauth token"
                     try? response.internalServerError(message: errorMessage).end()
@@ -210,7 +210,7 @@ class BackEnd {
         var oAuthToken: String?
         do {
             let (db, connection) = try MySQLConnector.connectToDatabase()
-            oAuthToken = try DBManager.shared.getOAuthTokenForUser(with: userId, to: db, on: connection)
+            oAuthToken = try DBUsersProvider.shared.getOAuthTokenForUser(with: userId, to: db, on: connection)
         } catch {
             let errorMessage = "Error while loading posts"
             try? response.internalServerError(message: errorMessage).end()

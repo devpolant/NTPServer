@@ -28,9 +28,9 @@ enum TokenDestination {
     }
 }
 
-class DBManager {
+class DBUsersProvider {
     
-    static let shared = DBManager()
+    static let shared = DBUsersProvider()
     
     private init() {}
     

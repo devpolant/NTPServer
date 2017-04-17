@@ -18,6 +18,8 @@ class FrontEnd {
     lazy var router: Router = {
         
         let router = Router()
+    
+        // Routes here
         
         return router
     }()
