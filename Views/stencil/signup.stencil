@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>NTP - Sign Up</title>
+
+    <!-- Fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,700|Raleway:200&amp;subset=cyrillic,cyrillic-ext" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/static/css/site.css" rel="stylesheet">
+    <link href="/static/css/navigation.css" rel="stylesheet">
+    <link href="/static/css/signup.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top app-transparent-nav-bar">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" id="app-translucent-navigation-button" href="../">Home</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a id="app-translucent-navigation-button" href="../">Sign In</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+
+      <form class="form-signup">
+        <h2 class="form-signup-heading" id="form-signup-heading">Please, sign up</h2>
+        <label for="inputLogin" class="sr-only">Login</label>
+        <input type="text" name="login" id="inputLogin" class="form-control" placeholder="Login" required autofocus>
+
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email" required>
+
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+
+        <label for="confirmPassword" class="sr-only">Confirm Password</label>
+        <input type="password" name="confirm_password" id="confirmPassword" class="form-control" placeholder="Confirm Password" required>
+
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <!-- <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button> -->
+        <a href="../dashboard" class="btn btn-info" role="button">Sign Up</a>
+      </form>
+
+    </div> <!-- /container -->
+
+
+    <footer class="footer app-footer">
+      <div class="container">
+        <p class="text-muted app-footer-text-white">Copyright &copy; 2017 NTP - News Template Platform</p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/static/js/bootstrap/bootstrap.min.js"></script>
+
+  </body>
+</html>

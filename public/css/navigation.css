@@ -1,0 +1,11 @@
+/* ---------- Navigation ---------- */
+
+.app-transparent-nav-bar {
+	background: rgba(0, 0, 0, 0.2);
+	border: none;
+}
+
+#app-translucent-navigation-button {
+	color: #fff;
+	font-size: 18px;
+}

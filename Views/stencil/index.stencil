@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>NTP</title>
+
+    <!-- Fonts-->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,700|Raleway:200&amp;subset=cyrillic,cyrillic-ext" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/static/css/site.css" rel="stylesheet">
+    <link href="/static/css/navigation.css" rel="stylesheet">
+    <link href="/static/css/home.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top app-transparent-nav-bar">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a id="app-translucent-navigation-button" href="/signup">Sign Up</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="app-header">
+		<h1>News Template Platform</h1>
+		<h3>Mobile and IoT platform for your business and social integration</h3>
+
+		<div class="subscribe">
+			<form action="/login" method="POST">
+				<input type="email" name="email" placeholder="Enter your email" />
+				<input type="password" name="password" placeholder="Enter your password" />
+				<input type="submit" value="Sign In" />
+			</form>
+		</div>
+		<p>
+		* By signing in you agree to Terms of Service and Privacy Policy
+		</p>
+
+	</div>
+
+    <div class="container">
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+
+      	<article class="app-content">
+			<h1>Exprore more about World best Service</h1>
+
+			<img class="img-left" src="/static/images/iphone-7.png">
+
+			<p>
+				Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.
+			</p>
+			<p>
+				Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.
+			</p>
+
+		</article>
+
+      </div>
+
+    </div> <!-- /container -->
+
+
+	<div class="subscribe">
+		<form action="/login" method="POST">
+			<input type="email" name="email" placeholder="Enter your email" />
+			<input type="password" name="password" placeholder="Enter your password" />
+			<input type="submit" value="Sign In" />
+		</form>
+	</div>
+
+    <footer class="footer app-footer">
+      <div class="container">
+        <p class="text-muted app-footer-text-white">Copyright &copy; 2017 NTP - News Template Platform</p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/static/js/bootstrap/bootstrap.min.js"></script>
+  </body>
+</html>

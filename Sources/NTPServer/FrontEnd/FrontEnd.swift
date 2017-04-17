@@ -8,6 +8,8 @@
 
 import Foundation
 import Kitura
+import KituraTemplateEngine
+import KituraStencil
 import KituraNet
 import SwiftyJSON
 
@@ -18,8 +20,12 @@ class FrontEnd {
     lazy var router: Router = {
         
         let router = Router()
+        router.all("/static", middleware: StaticFileServer())
     
-        let apiController = FrontEndAPIController()
+        let templateEngine = self.defaultTemplateEngine()
+        router.setDefault(templateEngine: templateEngine)
+        
+        let apiController = FrontEndAPIController(templateEngine: templateEngine)
         router.all(middleware: apiController.router)
         
         return router
@@ -28,6 +34,7 @@ class FrontEnd {
 
 
 // MARK: - HTTP Fetching
+
 extension FrontEnd {
     
     func get(_ path: String) -> JSON? {
@@ -36,5 +43,13 @@ extension FrontEnd {
     
     func post(_ path: String, fields: [String: Any]) -> JSON? {
         return HTTPManager.shared.post(path, relatedTo: baseApiURL, fields: fields)
+    }
+}
+
+// MARK: - Templates
+
+extension FrontEnd {
+    fileprivate func defaultTemplateEngine() -> TemplateEngine {
+        return StencilTemplateEngine()
     }
 }

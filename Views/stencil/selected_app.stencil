@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/css/site.css" rel="stylesheet">
+    <link href="/static/css/navigation.css" rel="stylesheet">
+    <link href="/static/css/selected_app.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">NTP</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="dashboard.html">Dashboard</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+
+      <!-- Left Menu -->
+
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Overview</a></li>
+            <li><a href="user_profile.html">My Profile</a></li>
+            <li><a href="create_app.html">Create App</a></li>
+            <li><a href="#">Analytics</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Logout</a></li>
+          </ul>
+        </div>
+
+        <!-- Dashboard center content -->
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">App Name</h1>
+
+          <form class="form-app">
+            <h2 class="form-app-heading">Set group to parse</h2>
+            <label for="inputEmail" class="sr-only">Login</label>
+            <input type="text" name="login" id="inputLogin" class="form-control" placeholder="https://vk.com/your-group-id" required autofocus>
+
+
+            <h2 class="form-app-heading">Set your location</h2>
+
+            <label for="inputEmail" class="sr-only">Your Location</label>
+            <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Location" required>
+
+            <button class="btn btn-lg btn-primary btn-block" id="app-send-button" type="submit">Send</button>
+          </form>
+
+          <footer class="footer app-footer">
+            <div class="container">
+              <p class="text-muted app-footer-text-black">Copyright &copy; 2017 NTP - News Template Platform</p>
+            </div>
+          </footer>
+
+
+        </div> <!-- End of dashboard center content-->
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/static/js/bootstrap/bootstrap.min.js"></script>
+
+  </body>
+</html>

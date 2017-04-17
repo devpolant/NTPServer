@@ -1,0 +1,21 @@
+/* Main Footer */
+
+.app-footer {
+	margin-top: 30px;
+	margin-bottom: 50px;
+}
+
+.app-footer-text-white {
+	color: #f9f9f9;
+}
+
+.app-footer-text-white {
+	color: #000;
+}
+
+/* Images */
+
+.img-left {
+	float: left;
+	margin: 0 30px 20px 0;
+}

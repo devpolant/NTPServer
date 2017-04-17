@@ -138,7 +138,8 @@ class WebAPIController: APIController {
     // MARK: Profile
     
     func getVendorProfile(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
-
+        defer { next() }
+        
         let requiredFields = ["token"]
         guard let fields = request.getPost(fields: requiredFields) else {
             try response.badRequest(expected: requiredFields).end()
@@ -160,6 +161,7 @@ class WebAPIController: APIController {
     }
     
     func updateVendorProfile(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
         
         let requiredFields = ["token", "login", "email"]
         guard let fields = request.getPost(fields: requiredFields) else {
@@ -200,6 +202,7 @@ class WebAPIController: APIController {
     // MARK: - Apps
     
     func appsList(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
         
         let requiredFields = ["token"]
         guard let fields = request.getPost(fields: requiredFields) else {
@@ -233,6 +236,7 @@ class WebAPIController: APIController {
     }
     
     func appInfo(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
         
         guard let appId = request.queryParameters["id"]?.int else {
             try response.badRequest(expected: ["id"]).end()
@@ -268,6 +272,7 @@ class WebAPIController: APIController {
     }
     
     func createApp(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
         
         let requiredFields = ["token", "name", "location", "social_group"]
         guard let fields = request.getPost(fields: requiredFields) else {
@@ -319,6 +324,7 @@ class WebAPIController: APIController {
     }
     
     func updateApp(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
         
         guard let appId = request.queryParameters["id"]?.int else {
             try response.badRequest(expected: ["id"]).end()
@@ -393,6 +399,8 @@ class WebAPIController: APIController {
     }
     
     func deleteApp(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
+        
         guard let appId = request.queryParameters["id"]?.int else {
             try response.badRequest(expected: ["id"]).end()
             return
