@@ -27,7 +27,7 @@ class BackEnd {
         
         router.post("/posts/list", handler: self.getWallPosts)
         
-        let webController = WebController()
+        let webController = WebAPIController()
         router.all("/web", middleware: webController.router)
         
         return router
