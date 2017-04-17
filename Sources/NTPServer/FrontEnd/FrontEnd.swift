@@ -22,10 +22,9 @@ class FrontEnd {
         let router = Router()
         router.all("/static", middleware: StaticFileServer())
     
-        let templateEngine = self.defaultTemplateEngine()
-        router.setDefault(templateEngine: templateEngine)
+        router.setDefault(templateEngine: self.defaultTemplateEngine())
         
-        let apiController = FrontEndAPIController(templateEngine: templateEngine)
+        let apiController = FrontEndAPIController(templateFolder: self.templateFolder)
         router.all(middleware: apiController.router)
         
         return router
@@ -49,6 +48,11 @@ extension FrontEnd {
 // MARK: - Templates
 
 extension FrontEnd {
+    
+    var templateFolder: String {
+        return "/stencil"
+    }
+    
     fileprivate func defaultTemplateEngine() -> TemplateEngine {
         return StencilTemplateEngine()
     }

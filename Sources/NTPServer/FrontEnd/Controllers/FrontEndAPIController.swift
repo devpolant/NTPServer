@@ -14,17 +14,17 @@ import Cryptor
 import LoggerAPI
 
 class FrontEndAPIController: APIController {
+
+    /// Name of folder, which contains template files
+    let templateFolder: String
     
-    let templateEngine: TemplateEngine
-    
-    init(templateEngine: TemplateEngine) {
-        self.templateEngine = templateEngine
+    init(templateFolder: String) {
+        self.templateFolder = templateFolder
     }
     
     lazy var router: Router = {
         
         let router = Router()
-//        router.setDefault(templateEngine: self.templateEngine)
         
         router.get("/", handler: self.loginUser)
         router.get("/signup", handler: self.signUpUser)
@@ -43,18 +43,13 @@ class FrontEndAPIController: APIController {
     func loginUser(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        do {
-            try response.render("/stencil/index", context: [:])
-        } catch {
-            print(error)
-            return
-        }
+        try response.render("\(templateFolder)/index", context: [:])
     }
     
     func signUpUser(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        try response.render("/stencil/signup", context: [:])
+        try response.render("\(templateFolder)/signup", context: [:])
     }
     
     // MARK: - Profile
@@ -62,7 +57,7 @@ class FrontEndAPIController: APIController {
     func getProfile(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        try response.render("/stencil/user_profile", context: [:])
+        try response.render("\(templateFolder)/user_profile", context: [:])
     }
     
     // MARK: - Dashboard
@@ -70,7 +65,7 @@ class FrontEndAPIController: APIController {
     func getDashboard(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        try response.render("/stencil/dashboard", context: [:])
+        try response.render("\(templateFolder)/dashboard", context: [:])
     }
     
     // MARK: Apps
@@ -78,13 +73,13 @@ class FrontEndAPIController: APIController {
     func createApp(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        try response.render("/stencil/create_app", context: [:])
+        try response.render("\(templateFolder)/create_app", context: [:])
     }
     
     func selectedApp(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        try response.render("/stencil/selected_app", context: [:])
+        try response.render("\(templateFolder)/selected_app", context: [:])
     }
 
 }
