@@ -134,7 +134,9 @@ class BackEnd {
                                 expiresIn: 0,
                                 userId: user.id!)
         do {
-            try DBUsersProvider.shared.deleteExpiredTokens(for: user, destination: .app, from: db, on: connection)
+            try DBUsersProvider.shared.deleteExpiredTokens(forUserWithId: user.id!.stringValue,
+                                                           destination: .app,
+                                                           from: db, on: connection)
             try DBUsersProvider.shared.addToken(token, destination: .app, to: db, on: connection)
         } catch {
             let errorMessage = "Error while updating user token"
@@ -222,9 +224,10 @@ class BackEnd {
         var posts = [[String: Any]]()
         driver.loadPosts(for: group, offset: offset, count: count, token: token) { socialPosts in
             
-            posts.append(contentsOf: socialPosts.map { post -> [String: Any] in
+            let postsJSON = socialPosts.map { post -> [String: Any] in
                 post.dictionaryValue
-            })
+            }
+            posts.append(contentsOf: postsJSON)
         }
         
         response.send(json: [

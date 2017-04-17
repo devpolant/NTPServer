@@ -12,6 +12,7 @@ import MySQL
 enum DBError: Swift.Error {
     case couldNotSave
     case userNotFound
+    case tokenNotFound(destination: TokenDestination)
 }
 
 enum TokenDestination {
@@ -23,7 +24,7 @@ enum TokenDestination {
         case .vk:
             return SocialNetwork.vk.identifier
         case .app:
-            return 1000
+            return Int.max
         }
     }
 }
@@ -68,6 +69,13 @@ class DBUsersProvider {
     // MARK: - Tokens
     
     func addToken(_ token: AccessToken, destination: TokenDestination, to database: Database, on connection: Connection) throws {
+        
+        // Delete current tokens and add new token for appropriate destination.
+        try self.deleteExpiredTokens(forUserWithId: token.userId.stringValue,
+                                     destination: destination,
+                                     from: database,
+                                     on: connection)
+        
         try database.execute("INSERT INTO `tokens` (token_string, expires_in, user_id, token_destination) VALUES (?, ?, ?, ?);",
                              [token.tokenString, token.expiresIn, token.userId, destination.identifier],
                              connection)
@@ -75,34 +83,36 @@ class DBUsersProvider {
     
     func setOAuthToken(_ token: OAuthToken, forUserWithId userId: Int, to database: Database, on connection: Connection) throws {
         
-        // TODO: update this logic
+        let accessToken = AccessToken(string: token.tokenString,
+                                      expiresIn: token.expiresIn,
+                                      userId: Int(token.userId)!)
         
-        try database.execute("UPDATE `users` SET oauth_token = ? WHERE id = ?;",
-                             [token.tokenString, userId],
-                             connection)
+        try self.addToken(accessToken, destination: .vk, to: database, on: connection)
     }
     
     func getOAuthTokenForUser(with userId: Int, to database: Database, on connection: Connection) throws -> String? {
-        
-        // TODO: update this logic
-        
-        let query = "SELECT * FROM `users` WHERE `id` = ?;"
-        let users = try database.execute(query, [userId], connection)
-        
-        guard let user = users.first else {
-            throw DBError.userNotFound
-        }
-        return user["oauth_token"]?.string
+        return try findToken(forUserWithId: userId.stringValue, destination: .vk, from: database, on: connection)
     }
     
     
+    func findToken(forUserWithId userId: String, destination: TokenDestination, from database: Database, on connection: Connection) throws -> String?  {
+        
+        let tokens = try database.execute("SELECT * FROM `user_tokens` WHERE user_id = ? AND token_destination = ?",
+                                          [userId, destination.identifier],
+                                          connection)
+        
+        
+        guard let token = tokens.first else {
+            throw DBError.tokenNotFound(destination: destination)
+        }
+        return token["token_string"]?.string
+    }
     
-    func deleteExpiredTokens(for user: User, destination: TokenDestination, from database: Database, on connection: Connection) throws {
+    func deleteExpiredTokens(forUserWithId userId: String, destination: TokenDestination, from database: Database, on connection: Connection) throws {
         // Delete all tokens for user at now.
         
-        let userID = String(user.id!)
-        try database.execute("DELETE FROM `tokens` WHERE user_id = ? AND token_destination = ?",
-                             [userID, destination.identifier],
+        try database.execute("DELETE FROM `user_tokens` WHERE user_id = ? AND token_destination = ?",
+                             [userId, destination.identifier],
                              connection)
     }
     
