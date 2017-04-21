@@ -130,7 +130,7 @@ class DBVendorProvider {
     // MARK: Fetch
     
     func fetchApps(forVendorWithId vendorId: Int, from database: Database, on connection: Connection) throws -> [App] {
-        let query = "SELECT a.*, c.social_group FROM `\(App.entity)` a, `\(Category.entity)` c WHERE c.id = a.id AND  `vendor_id` = ?;"
+        let query = "SELECT a.*, c.social_group FROM `\(App.entity)` a, `\(Category.entity)` c WHERE c.app_id = a.id AND  a.vendor_id = ?;"
         let arguments: [NodeRepresentable] = [vendorId]
         
         let apps = try database.execute(query, arguments, connection)
@@ -138,7 +138,7 @@ class DBVendorProvider {
     }
     
     func fetchApp(with appId: Int, from database: Database, on connection: Connection) throws -> App {
-        let query = "SELECT a.*, c.social_group FROM `\(App.entity)` a, `\(Category.entity)` c WHERE c.id = a.id AND `id` = ?;"
+        let query = "SELECT a.*, c.social_group FROM `\(App.entity)` a, `\(Category.entity)` c WHERE c.app_id = a.id AND a.id = ?;"
         let arguments: [NodeRepresentable] = [appId]
         
         let apps = try database.execute(query, arguments, connection)
@@ -149,7 +149,7 @@ class DBVendorProvider {
     }
     
     fileprivate func fetchApp(vendorId: Int, appName: String, from database: Database, on connection: Connection) throws -> App {
-        let query = "SELECT a.*, c.social_group FROM `\(App.entity)` a, `\(Category.entity)` c WHERE c.id = a.id AND `vendor_id` = ? AND `name` = ?;"
+        let query = "SELECT * FROM `\(App.entity)` WHERE vendor_id = ? AND name = ?;"
         let arguments: [NodeRepresentable] = [vendorId, appName]
         
         let apps = try database.execute(query, arguments, connection)

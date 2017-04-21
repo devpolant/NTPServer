@@ -80,7 +80,8 @@
             <label for="inputLocation" class="sr-only">Your Location</label>
             <input type="email" name="location" id="inputLocation" class="form-control" placeholder="Location" required>
 
-            <button class="btn btn-lg btn-primary btn-block" id="app-send-button" type="submit">Create</button>
+            <input type="button" id="app-send-button" class="btn btn-info" value="Create" />
+            <!-- <button class="btn btn-lg btn-primary btn-block" id="app-send-button" type="submit">Create</button> -->
           </form>
 
           <footer class="footer app-footer">
@@ -99,6 +100,8 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="/static/js/bootstrap/bootstrap.min.js"></script>
-
+    <!-- JS Files -->
+    <script src="/static/js/utils/tokens.js" type="text/javascript"></script>
+    <script src="/static/js/pages/create-app.js" type="text/javascript"></script>
   </body>
 </html>

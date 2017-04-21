@@ -1,6 +1,6 @@
 
 $(document).ready(function () {
-    var token = localStorage.getItem("access_token");
+    var token = getToken();
     $.ajax({
             url: "http://localhost:8090/dashboard/apps/list", 
             type:"POST",
@@ -16,7 +16,8 @@ $(document).ready(function () {
                 try {
                     if(!data.error) {
                         if (data.apps.length > 0) {
-                            for (var app in data.apps) {
+                            for (i = 0; i < data.apps.length; i++) {
+                                var app = data.apps[i];
                                 $('#apps-table-body').append('<tr><td>'+ app.id + '</td>'
                                     +'<td>'+ app.name + '</td>'
                                     +'<td>'+ app.social_group + '</td>'

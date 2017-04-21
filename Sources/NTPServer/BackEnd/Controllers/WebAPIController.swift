@@ -319,6 +319,7 @@ class WebAPIController: APIRouter {
             try response.internalServerError(message: errorMessage).end()
             return
         }
+        app.socialGroup = category.socialGroupURL
         
         try db.execute("COMMIT;", [], connection)
         
