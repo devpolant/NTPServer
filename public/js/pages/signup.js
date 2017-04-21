@@ -16,9 +16,10 @@ $(document).ready(function () {
                 "confirm_password": confirm_password_value 
             },
             success:function(data){
+                console.log(data);
                 try {
                     if(!data.error) {
-						localStorage.setItem("access_token", data.access_token)
+						setToken(data.access_token);
                         window.location = '/dashboard';
                     } else {
                          // $("#alert_container").removeClass().addClass("alert alert-danger").text(data.message).show();

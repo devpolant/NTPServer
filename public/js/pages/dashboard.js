@@ -1,20 +1,32 @@
-    $(document).ready(function () {
+
+$(document).ready(function () {
     var token = localStorage.getItem("access_token");
-    console.log(token)
-     $.ajax({
-            url: "http://localhost:8090/dashboard", 
+    $.ajax({
+            url: "http://localhost:8090/dashboard/apps/list", 
             type:"POST",
-            headers: {
-                    'Authorization':'Bearer ' + token
+            // headers: {
+            //         'Authorization':'Bearer ' + token
+            // },
+            data: { 
+                token: token 
             },
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
             success:function(data){
+                console.log(data);
                 try {
                     if(!data.error) {
-                        for (var i in data.menu_categories) {
-                            var each = data.menu_categories[i];
-                            $('#menu_tablist').append('<li role="presentation"><a id="'+each._id+'" onclick="selectCategory(\''+each._id+'\')" href="#">'+each.name+'</a></li>');
+                        if (data.apps.length > 0) {
+                            for (var app in data.apps) {
+                                $('#apps-table-body').append('<tr><td>'+ app.id + '</td>'
+                                    +'<td>'+ app.name + '</td>'
+                                    +'<td>'+ app.social_group + '</td>'
+                                    +'<td>'+ app.location + '</td>'
+                                    +'<td>'+ app.status + '</td>'
+                                    +'<td><a href="selected_app.html" class="btn btn-info" role="button">View</a></td>');
+                            }
+                        } else {
+                            $('#apps-table-body').append('<p style="margin:20px">You don\'t have apps yet</p>');
                         }
-                        selectCategory(data.menu_categories[0]._id);
                     }
                 } catch(err) {
                     alert(err.message);

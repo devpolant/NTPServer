@@ -53,7 +53,8 @@ extension App: MySQLInitializable {
         let location = node["location"]!.string!
         let vendorId = node["vendor_id"]!.int!
         let status = node["status"]!.string!
-        self.init(id: id, name: name, location: location, vendorId: vendorId, status: status)
+        let socialGroup = node["social_group"]?.string
+        self.init(id: id, name: name, location: location, vendorId: vendorId, status: status, socialGroup: socialGroup)
     }
 }
 

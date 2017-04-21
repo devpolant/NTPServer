@@ -115,19 +115,22 @@ class WebAPIController: APIRouter {
             try response.badRequest(message: "Wrong password or login").end()
             return
         }
+        /*
         let tokenString = UUID().uuidString
+        // FIXME: update token string on login
         vendor.token = tokenString
         
         // Update vendor token
         
         do {
             // FIXME: update works incorrect now
-//            try DBVendorProvider.shared.updateVendor(vendor, in: db, on: connection)
+            try DBVendorProvider.shared.updateVendor(vendor, in: db, on: connection)
         } catch {
             let errorMessage = "Error while updating Vendor's token"
             try response.internalServerError(message: errorMessage).end()
             return
         }
+        */
         
         try db.execute("COMMIT;", [], connection)
         

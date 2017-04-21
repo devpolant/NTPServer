@@ -30,12 +30,15 @@ final class App {
     var vendorId: Int
     var status: AppStatus
     
-    init(id: Int? = nil, name: String, location: String, vendorId: Int, status: String) {
+    var socialGroup: String?
+    
+    init(id: Int? = nil, name: String, location: String, vendorId: Int, status: String, socialGroup: String? = nil) {
         self.id = id
         self.name = name
         self.location = location
         self.vendorId = vendorId
         self.status = AppStatus(status: status)
+        self.socialGroup = socialGroup
     }
     
     init(with dictionary: [String: Any]) {
@@ -44,6 +47,7 @@ final class App {
         self.location = dictionary["location"] as! String
         self.vendorId = dictionary["vendor_id"] as! Int
         self.status = AppStatus(status: dictionary["status"] as! String)
+        self.socialGroup = dictionary["social_group"] as? String
     }
 }
 
@@ -65,6 +69,9 @@ extension App {
         ]
         if let id = id {
             result["id"] = id
+        }
+        if let socialGroup = socialGroup {
+            result["social_group"] = socialGroup
         }
         return result
     }

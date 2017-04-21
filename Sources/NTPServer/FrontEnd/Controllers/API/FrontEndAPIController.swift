@@ -82,7 +82,7 @@ class FrontEndAPIController {
             return
         }
         
-        let appsListResult = httpController.post("\(Path.apps)/list", fields: fields)
+        let appsListResult = httpController.post("\(Path.profile)", fields: fields)
         guard let jsonResult = appsListResult else {
             return
         }
@@ -101,7 +101,7 @@ class FrontEndAPIController {
             return
         }
         
-        let appsListResult = httpController.post("\(Path.profile)", fields: fields)
+        let appsListResult = httpController.post("\(Path.apps)/list", fields: fields)
         guard let jsonResult = appsListResult else {
             return
         }

@@ -46,21 +46,47 @@ class FrontEnd {
         
         router.get("/", handler: view.getMainPage)
         
+        // Auth
+        
         let authRouter = router.route("/auth")
         
-        authRouter.post("/login", handler: api.login)
+        authRouter.route("/login")
+            .post(handler: api.login)
+        
         authRouter.route("/signup")
             .get(handler: view.getSignUpPage)
             .post(handler: api.signUp)
         
-        router.get("/profile", handler: view.getProfilePage)
+        // Profile
+        
+        let profileRouter = router.route("/profile")
+        profileRouter.get(handler: view.getProfilePage)
+        
+        // Dashboard
         
         let dashboardRouter = router.route("/dashboard")
         dashboardRouter.get(handler: view.getDashboardPage)
         
-        dashboardRouter.route("/apps")
-            .get("/create", handler: view.getCreateAppPage)
-            .get("/:id/info", handler: view.getSelectedAppPage)
+        // Apps
+        
+        let appsRouter = dashboardRouter.route("/apps")
+        
+        appsRouter.route("/list")
+            .post(handler: api.appsList)
+        
+        appsRouter.route("/:id/info")
+            .get(handler: view.getSelectedAppPage)
+            .post(handler: api.appInfo)
+        
+        appsRouter.route("/create")
+            .get(handler: view.getCreateAppPage)
+            .post(handler: api.createApp)
+        
+        appsRouter.route("/:id/update")
+            .post(handler: api.updateApp)
+        
+        appsRouter.route("/:id/delete")
+            .post(handler: api.deleteApp)
     }
 }
 

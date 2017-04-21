@@ -115,8 +115,8 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
+              <tbody id="apps-table-body">
+                <!-- <tr>
                   <td>1</td>
                   <td>Apple</td>
                   <td>https://vk.com/iphone</td>
@@ -131,7 +131,7 @@
                   <td>Kharkiv, ...</td>
                   <td>Active</td>
                   <td><a href="selected_app.html" class="btn btn-info" role="button">View</a></td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
 
@@ -153,6 +153,8 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="/static/js/bootstrap/bootstrap.min.js"></script>
-
+    <!-- JS Files -->
+    <script src="/static/js/utils/tokens.js" type="text/javascript"></script>
+    <script src="/static/js/pages/dashboard.js" type="text/javascript"></script>
   </body>
 </html>
