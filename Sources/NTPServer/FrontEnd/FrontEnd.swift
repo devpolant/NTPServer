@@ -23,22 +23,46 @@ class FrontEnd {
         let router = Router()
         
         // File Server
-        router.all("/static", middleware: StaticFileServer())
+        router.all("/static", middleware: self.defaultFileServer)
         // Parser
-        router.post("/", middleware: BodyParser())
+        router.post("/", middleware: self.defaultParser)
         // Templates
-        router.setDefault(templateEngine: self.defaultTemplateEngine())
+        router.setDefault(templateEngine: self.defaultTemplateEngine)
         // CORS
-        router.all(middleware: self.corsMiddleware())
+        router.all(middleware: self.corsMiddleware)
         
-        // API
-        let apiController = FrontEndAPIController(baseApiURL: self.baseApiURL, templateFolder: self.templateFolder)
-        router.all(middleware: apiController.router)
+        // Controllers
+        let apiController = FrontEndAPIController(baseApiURL: self.baseApiURL)
+        let viewController = FrontEndViewController(templateFolder: self.templateFolder)
+        
+        self.setupRoutes(for: router, api: apiController, view: viewController)
         
         return router
     }()
+    
+    // MARK: Routes
+    
+    private func setupRoutes(for router: Router, api: FrontEndAPIController, view: FrontEndViewController) {
+        
+        router.get("/", handler: view.getMainPage)
+        
+        let authRouter = router.route("/auth")
+        
+        authRouter.post("/login", handler: api.login)
+        authRouter.route("/signup")
+            .get(handler: view.getSignUpPage)
+            .post(handler: api.signUp)
+        
+        router.get("/profile", handler: view.getProfilePage)
+        
+        let dashboardRouter = router.route("/dashboard")
+        dashboardRouter.get(handler: view.getDashboardPage)
+        
+        dashboardRouter.route("/apps")
+            .get("/create", handler: view.getCreateAppPage)
+            .get("/:id/info", handler: view.getSelectedAppPage)
+    }
 }
-
 
 // MARK: - HTTP Fetching
 
@@ -53,6 +77,24 @@ extension FrontEnd {
     }
 }
 
+// MARK: - Files
+
+extension FrontEnd {
+    
+    fileprivate var defaultFileServer: RouterMiddleware {
+        return StaticFileServer()
+    }
+}
+
+// MARK: - Parser
+
+extension FrontEnd {
+    
+    fileprivate var defaultParser: RouterMiddleware {
+        return BodyParser()
+    }
+}
+
 // MARK: - Templates
 
 extension FrontEnd {
@@ -61,17 +103,16 @@ extension FrontEnd {
         return "/stencil"
     }
     
-    fileprivate func defaultTemplateEngine() -> TemplateEngine {
+    fileprivate var defaultTemplateEngine: TemplateEngine {
         return StencilTemplateEngine()
     }
 }
-
 
 // MARK: - CORS
 
 extension FrontEnd {
     
-    fileprivate func corsMiddleware() -> RouterMiddleware {
+    fileprivate var corsMiddleware: RouterMiddleware {
         
         let allowedHeaders = [
             "Content-Type",
