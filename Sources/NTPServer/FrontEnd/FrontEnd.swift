@@ -64,23 +64,10 @@ class FrontEnd {
     }
 }
 
-// MARK: - HTTP Fetching
-
-extension FrontEnd {
-    
-    func get(_ path: String) -> JSON? {
-        return HTTPManager.shared.get(path, relatedTo: baseApiURL)
-    }
-    
-    func post(_ path: String, fields: [String: Any]) -> JSON? {
-        return HTTPManager.shared.post(path, relatedTo: baseApiURL, fields: fields)
-    }
-}
 
 // MARK: - Files
 
 extension FrontEnd {
-    
     fileprivate var defaultFileServer: RouterMiddleware {
         return StaticFileServer()
     }
@@ -89,7 +76,6 @@ extension FrontEnd {
 // MARK: - Parser
 
 extension FrontEnd {
-    
     fileprivate var defaultParser: RouterMiddleware {
         return BodyParser()
     }
@@ -114,16 +100,15 @@ extension FrontEnd {
     
     fileprivate var corsMiddleware: RouterMiddleware {
         
-        let allowedHeaders = [
-            "Content-Type",
-            "X-Requested-With",
-            "Origin",
-            "Accept",
-            "Access-Control-Allow-Origin",
-            "Authorization"
-        ]
+        let options = Options(allowedOrigin: .all,
+                              methods: allowedHttpMethods,
+                              allowedHeaders: allowedHeaders)
         
-        let httpMethods = [
+        return CORS(options: options)
+    }
+    
+    private var allowedHttpMethods: [String] {
+        return [
             HTTPMethod.get.stringValue,
             HTTPMethod.head.stringValue,
             HTTPMethod.post.stringValue,
@@ -133,11 +118,16 @@ extension FrontEnd {
             HTTPMethod.options.stringValue,
             HTTPMethod.trace.stringValue
         ]
-        
-        let options = Options(allowedOrigin: .all,
-                              methods: httpMethods,
-                              allowedHeaders: allowedHeaders)
-        
-        return CORS(options: options)
+    }
+    
+    private var allowedHeaders: [String] {
+        return [
+            "Content-Type",
+            "X-Requested-With",
+            "Origin",
+            "Accept",
+            "Access-Control-Allow-Origin",
+            "Authorization"
+        ]
     }
 }
