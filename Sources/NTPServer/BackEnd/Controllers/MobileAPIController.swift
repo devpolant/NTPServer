@@ -12,7 +12,7 @@ import SwiftyJSON
 import Cryptor
 import LoggerAPI
 
-class MobileAPIController: APIController {
+class MobileAPIController: APIRouter {
     
     lazy var router: Router = {
         let router = Router()

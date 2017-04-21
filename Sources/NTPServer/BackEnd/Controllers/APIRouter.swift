@@ -8,6 +8,6 @@
 
 import Kitura
 
-protocol APIController {
+protocol APIRouter {
     var router: Router { get set }
 }
