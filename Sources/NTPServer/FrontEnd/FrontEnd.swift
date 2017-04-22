@@ -60,7 +60,10 @@ class FrontEnd {
         // Profile
         
         let profileRouter = router.route("/profile")
-        profileRouter.get(handler: view.getProfilePage)
+        profileRouter.post("/", handler: api.getVendorProfile)
+        profileRouter.get("/", handler: view.getProfilePage)
+        
+        profileRouter.post("/update", handler: api.updateVendorProfile)
         
         // Dashboard
         

@@ -51,9 +51,9 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li><a href="dashboard.html">Overview</a></li>
+            <li><a href="/dashboard">Overview</a></li>
             <li class="active"><a href="#">My Profile</a></li>
-            <li><a href="create_app.html">Create App</a></li>
+            <li><a href="/dashboard/apps/create">Create App</a></li>
             <li><a href="#">Analytics</a></li>
           </ul>
           <ul class="nav nav-sidebar">
@@ -79,7 +79,8 @@
             <label for="inputEmail" class="sr-only">Email address</label>
             <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email" required>
 
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Update</button>
+            <input type="button" id="app-send-button" class="btn btn-info" value="Send" />
+            <!-- <button class="btn btn-lg btn-primary btn-block" type="submit">Update</button> -->
           </form>
 
           <footer class="footer app-footer">
@@ -98,6 +99,8 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="/static/js/bootstrap/bootstrap.min.js"></script>
-
+    <!-- JS Files -->
+    <script src="/static/js/utils/tokens.js" type="text/javascript"></script>
+    <script src="/static/js/pages/user-profile.js" type="text/javascript"></script>
   </body>
 </html>

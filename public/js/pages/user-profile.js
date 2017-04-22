@@ -2,11 +2,10 @@
 $(document).ready(function () {
     var token = getToken();
 
-    // Load app info
-    var appId = $("#inputAppId").val();
+    // Load info
 
     $.ajax({
-        url:"http://localhost:8090/dashboard/apps/" + appId + "/info",
+        url:"http://localhost:8090/profile",
         type:"POST",
         data: { 
             token: token
@@ -16,11 +15,9 @@ $(document).ready(function () {
             console.log(data);
             try {
                 if(!data.error) {
-                    var app = data.app;
-                    $("#inputAppId").val(app.id);
-                    $("#inputAppName").val(app.name);
-                    $("#inputLocation").val(app.location);
-                    $("#inputGroupName").val(app.social_group);
+                    var vendor = data.profile;
+                    $("#inputLogin").val(vendor.login);
+                    $("#inputEmail").val(vendor.email);
                 } 
             } catch(err) {
                 alert(err.message);
@@ -35,18 +32,15 @@ $(document).ready(function () {
     // Update app info
 
     $("#app-send-button").on("click", function () {
-        var appId = $("#inputAppId").val();
-        var name = $("#inputAppName").val();
-        var location = $("#inputLocation").val();
-        var socialGroup = $("#inputGroupName").val();
+        var login = $("#inputLogin").val();
+        var email = $("#inputEmail").val();
         $.ajax({
-            url:"http://localhost:8090/dashboard/apps/" + appId + "/update",
+            url:"http://localhost:8090/profile/update",
             type:"POST",
             data: { 
                 token: token,
-                name: name,
-                location: location,
-                social_group: socialGroup
+                login: login,
+                email: email
             },
             contentType: "application/x-www-form-urlencoded; charset=UTF-8",
             success:function(data){

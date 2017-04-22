@@ -82,8 +82,24 @@ class FrontEndAPIController {
             return
         }
         
-        let appsListResult = httpController.post("\(Path.profile)", fields: fields)
-        guard let jsonResult = appsListResult else {
+        let profileResult = httpController.post("\(Path.profile)", fields: fields)
+        guard let jsonResult = profileResult else {
+            return
+        }
+        response.send(json: jsonResult)
+    }
+    
+    func updateVendorProfile(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
+        
+        let requiredFields = ["token", "login", "email"]
+        guard let fields = request.getPost(fields: requiredFields) else {
+            try response.badRequest(expected: requiredFields).end()
+            return
+        }
+
+        let profileResult = httpController.post("\(Path.profile)/update", fields: fields)
+        guard let jsonResult = profileResult else {
             return
         }
         response.send(json: jsonResult)
