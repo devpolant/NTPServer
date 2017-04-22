@@ -112,7 +112,7 @@ class FrontEndAPIController {
     func appInfo(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        guard let appId = request.queryParameters["id"]?.int else {
+        guard let appId = request.parameters["id"]?.int else {
             try response.badRequest(expected: ["id"]).end()
             return
         }
@@ -149,7 +149,7 @@ class FrontEndAPIController {
     func updateApp(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        guard let appId = request.queryParameters["id"]?.int else {
+        guard let appId = request.parameters["id"]?.int else {
             try response.badRequest(expected: ["id"]).end()
             return
         }
@@ -170,7 +170,7 @@ class FrontEndAPIController {
     func deleteApp(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        guard let appId = request.queryParameters["id"]?.int else {
+        guard let appId = request.parameters["id"]?.int else {
             try response.badRequest(expected: ["id"]).end()
             return
         }

@@ -74,19 +74,26 @@ class FrontEnd {
         appsRouter.route("/list")
             .post(handler: api.appsList)
         
-        appsRouter.route("/:id/info")
-            .get(handler: view.getSelectedAppPage)
-            .post(handler: api.appInfo)
+//        appsRouter.route("/:id/info")
+//            .get(handler: view.getSelectedAppPage)
+//            .post(handler: api.appInfo)
+        
+        appsRouter.get("/:id/info", handler: view.getSelectedAppPage)
+        appsRouter.post("/:id/info", handler: api.appInfo)
         
         appsRouter.route("/create")
             .get(handler: view.getCreateAppPage)
             .post(handler: api.createApp)
         
-        appsRouter.route("/:id/update")
-            .post(handler: api.updateApp)
+//        appsRouter.route("/:id/update")
+//            .post(handler: api.updateApp)
         
-        appsRouter.route("/:id/delete")
-            .post(handler: api.deleteApp)
+        appsRouter.post("/:id/update", handler: api.updateApp)
+        
+//        appsRouter.route("/:id/delete")
+//            .post(handler: api.deleteApp)
+        
+        appsRouter.post("/:id/delete", handler: api.deleteApp)
     }
 }
 

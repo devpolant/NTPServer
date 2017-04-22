@@ -23,7 +23,7 @@ $(document).ready(function () {
                                     +'<td>'+ app.social_group + '</td>'
                                     +'<td>'+ app.location + '</td>'
                                     +'<td>'+ app.status + '</td>'
-                                    +'<td><a href="selected_app.html" class="btn btn-info" role="button">View</a></td>');
+                                    +'<td><a href="'+ '/dashboard/apps/' + app.id + '/info' +'" class="btn btn-info" role="button">View</a></td>');
                             }
                         } else {
                             $('#apps-table-body').append('<p style="margin:20px">You don\'t have apps yet</p>');

@@ -92,7 +92,7 @@ class DBUsersProvider {
     
     func token(forUserWithId userId: String, destination: TokenDestination, from database: Database, on connection: Connection) throws -> String?  {
         
-        let findQuery = "SELECT * FROM `\(UserToken.entity)` WHERE user_id = ? AND token_destination = ?"
+        let findQuery = "SELECT * FROM `\(UserToken.entity)` WHERE user_id = ? AND token_destination = ?;"
         let arguments: [NodeRepresentable] = [userId, destination.identifier]
         
         let tokens = try database.execute(findQuery, arguments, connection)
@@ -107,7 +107,7 @@ class DBUsersProvider {
     func deleteExpiredTokens(forUserWithId userId: String, destination: TokenDestination, from database: Database, on connection: Connection) throws {
         // Delete all tokens for user at now.
         
-        let deleteQuery = "DELETE FROM `\(UserToken.entity)` WHERE user_id = ? AND token_destination = ?"
+        let deleteQuery = "DELETE FROM `\(UserToken.entity)` WHERE user_id = ? AND token_destination = ?;"
         let arguments: [NodeRepresentable] = [userId, destination.identifier]
         
         try database.execute(deleteQuery, arguments, connection)

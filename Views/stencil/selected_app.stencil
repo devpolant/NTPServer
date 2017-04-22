@@ -35,7 +35,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
@@ -52,8 +52,8 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li class="active"><a href="#">Overview</a></li>
-            <li><a href="user_profile.html">My Profile</a></li>
-            <li><a href="create_app.html">Create App</a></li>
+            <li><a href="/profile">My Profile</a></li>
+            <li><a href="/dashboard/apps/create">Create App</a></li>
             <li><a href="#">Analytics</a></li>
           </ul>
           <ul class="nav nav-sidebar">
@@ -67,17 +67,24 @@
           <h1 class="page-header">App Name</h1>
 
           <form class="form-app">
+            <input type="hidden" id="inputAppId" name="app_id" value="{{ app_id }}">
+            <input type="hidden" id="inputAppName" name="name" value="">
+
+
             <h2 class="form-app-heading">Set group to parse</h2>
+
             <label for="inputEmail" class="sr-only">Login</label>
-            <input type="text" name="login" id="inputLogin" class="form-control" placeholder="https://vk.com/your-group-id" required autofocus>
+            <input type="text" name="group_name" id="inputGroupName" class="form-control" placeholder="https://vk.com/your-group-id" required autofocus>
 
 
             <h2 class="form-app-heading">Set your location</h2>
 
             <label for="inputEmail" class="sr-only">Your Location</label>
-            <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Location" required>
+            <input type="text" name="location" id="inputLocation" class="form-control" placeholder="Location" required>
 
-            <button class="btn btn-lg btn-primary btn-block" id="app-send-button" type="submit">Send</button>
+
+            <input type="button" id="app-send-button" class="btn btn-info" value="Send" />
+            <!-- <button class="btn btn-lg btn-primary btn-block" id="app-send-button" type="submit">Send</button> -->
           </form>
 
           <footer class="footer app-footer">
@@ -96,6 +103,8 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="/static/js/bootstrap/bootstrap.min.js"></script>
-
+    <!-- JS Files -->
+    <script src="/static/js/utils/tokens.js" type="text/javascript"></script>
+    <script src="/static/js/pages/selected-app.js" type="text/javascript"></script>
   </body>
 </html>

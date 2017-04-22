@@ -70,7 +70,7 @@
 
             <h2 class="form-app-heading">Set app name</h2>
             <label for="inputAppName" class="sr-only">App Name</label>
-            <input type="text" name="app_name" id="inputAppName" class="form-control" placeholder="AppName" required autofocus>
+            <input type="text" name="name" id="inputAppName" class="form-control" placeholder="AppName" required autofocus>
 
             <h2 class="form-app-heading">Set group to parse</h2>
             <label for="inputGroupName" class="sr-only">Group Name</label>

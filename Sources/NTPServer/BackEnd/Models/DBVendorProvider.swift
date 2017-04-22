@@ -35,7 +35,7 @@ class DBVendorProvider {
         guard let vendorId = vendor.id else {
             throw DBError.identifierAbsent(entityName: Vendor.entity)
         }
-        let updateQuery = "UPDATE `\(Vendor.entity)` SET `login` = ? AND `email` = ? AND `salt` = ?, `password` = ? AND `token` = ? WHERE `id` = ?"
+        let updateQuery = "UPDATE `\(Vendor.entity)` SET `login` = ?, `email` = ?, `salt` = ?, `password` = ?, `token` = ? WHERE `id` = ?;"
         let arguments: [NodeRepresentable] = [vendor.login, vendor.email, vendor.salt, vendor.password, vendor.token, vendorId]
         try database.execute(updateQuery, arguments, connection)
     }
@@ -83,7 +83,7 @@ class DBVendorProvider {
     
     func token(forVendorWithId vendorId: Int, from database: Database, on connection: Connection) throws -> String? {
         
-        let findQuery = "SELECT `token` FROM `\(Vendor.entity)` WHERE id = ?"
+        let findQuery = "SELECT `token` FROM `\(Vendor.entity)` WHERE id = ?;"
         let arguments: [NodeRepresentable] = [vendorId]
         
         let vendorTokens = try database.execute(findQuery, arguments, connection)
@@ -112,7 +112,7 @@ class DBVendorProvider {
         guard let appId = app.id else {
             throw DBError.identifierAbsent(entityName: App.entity)
         }
-        let updateQuery = "UPDATE `\(App.entity)` SET `name` = ? AND `location` = ? AND `vendor_id` = ? AND `status` = ? WHERE `id` = ?"
+        let updateQuery = "UPDATE `\(App.entity)` SET `name` = ?, `location` = ?, `vendor_id` = ?, `status` = ? WHERE `id` = ?;"
         let arguments: [NodeRepresentable] = [app.name, app.location, app.vendorId, app.status.stringValue, appId]
         try database.execute(updateQuery, arguments, connection)
     }
@@ -122,7 +122,7 @@ class DBVendorProvider {
         // TODO: handle errors
         try deleteCategories(forApp: id, from: database, on: connection)
         
-        let deleteAppQuery = "DELETE FROM `\(App.entity)` WHERE `id` = ?"
+        let deleteAppQuery = "DELETE FROM `\(App.entity)` WHERE `id` = ?;"
         let deleteAppArguments: [NodeRepresentable] = [id]
         try database.execute(deleteAppQuery, deleteAppArguments, connection)
     }
@@ -178,20 +178,20 @@ class DBVendorProvider {
         guard let categoryId = category.id else {
             throw DBError.identifierAbsent(entityName: Category.entity)
         }
-        let updateQuery = "UPDATE `\(Category.entity)` SET `name` = ? AND `app_id` = ? AND `social_group` = ? AND `social_network_id` = ? WHERE `id` = ?"
+        let updateQuery = "UPDATE `\(Category.entity)` SET `name` = ?, `app_id` = ?, `social_group` = ?, `social_network_id` = ? WHERE `id` = ?;"
         let arguments: [NodeRepresentable] =
             [category.name, category.appId, category.socialGroupURL, category.socialNetwork.identifier, categoryId]
         try database.execute(updateQuery, arguments, connection)
     }
     
     func deleteCategory(with id: Int, from database: Database, on connection: Connection) throws {
-        let deleteQuery = "DELETE FROM `\(Category.entity)` WHERE `id` = ?"
+        let deleteQuery = "DELETE FROM `\(Category.entity)` WHERE `id` = ?;"
         let arguments: [NodeRepresentable] = [id]
         try database.execute(deleteQuery, arguments, connection)
     }
     
     func deleteCategories(forApp appId: Int, from database: Database, on connection: Connection) throws {
-        let deleteQuery = "DELETE FROM `\(Category.entity)` WHERE `app_id` = ?"
+        let deleteQuery = "DELETE FROM `\(Category.entity)` WHERE `app_id` = ?;"
         let arguments: [NodeRepresentable] = [appId]
         try database.execute(deleteQuery, arguments, connection)
     }
