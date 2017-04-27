@@ -16,6 +16,10 @@ final class Category {
     var socialGroupURL: String
     var socialNetwork: SocialNetwork
     
+    var socialGroupDomainName: String {
+        return URL(string: socialGroupURL)!.lastPathComponent
+    }
+    
     init(id: Int? = nil, name: String, appId: Int, socialGroupURL: String, socialNetworkId: Int) {
         self.id = id
         self.name = name

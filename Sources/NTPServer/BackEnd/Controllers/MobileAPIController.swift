@@ -198,20 +198,18 @@ class MobileAPIController: APIRouter {
     func getWallPosts(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        let requiredFields = ["token", "count", "offset", "group_domain", "user_id"]
+        let requiredFields = ["token", "app_id", "count", "offset", "user_id"]
         
         guard let fields = request.getPost(fields: requiredFields) else {
             try response.badRequest(expected: requiredFields).end()
             return
         }
         let token = fields["token"]!
-        let group = fields["group_domain"]!
-        let count = Int(fields["count"]!)!
-        let offset = Int(fields["offset"]!)!
         let userId = Int(fields["user_id"]!)!
         
-        let (db, connection) = try MySQLConnector.connectToDatabase()
+        // Check token
         
+        let (db, connection) = try MySQLConnector.connectToDatabase()
         var savedToken: String?
         do {
             savedToken = try DBUsersProvider.shared.token(forUserWithId: String(userId),
@@ -230,6 +228,8 @@ class MobileAPIController: APIRouter {
             return
         }
         
+        // Fetch social token
+        
         var oAuthToken: String?
         do {
             oAuthToken = try DBUsersProvider.shared.getOAuthTokenForUser(with: userId, to: db, on: connection)
@@ -238,11 +238,31 @@ class MobileAPIController: APIRouter {
             try? response.internalServerError(message: errorMessage).end()
             return
         }
-        
         guard let socialToken = oAuthToken else { return }
         
+        // Fetch social group to parse for app with id
+        
+        let appId = Int(fields["app_id"]!)!
+        
+        var socialGroupToParse: String?
+        do {
+            let category = try DBVendorProvider.shared.firstCategory(forApp: appId,
+                                                                     from: db,
+                                                                     on: connection)
+            socialGroupToParse = category.socialGroupDomainName
+        } catch {
+            let errorMessage = "Error while loading app social group URL to parse"
+            try? response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        guard let socialGroup = socialGroupToParse else { return }
+        
+        let count = Int(fields["count"]!)!
+        let offset = Int(fields["offset"]!)!
+        
         var posts = [[String: Any]]()
-        driver.loadPosts(for: group, offset: offset, count: count, token: socialToken) { socialPosts in
+        driver.loadPosts(for: socialGroup, offset: offset, count: count, token: socialToken) { socialPosts in
             
             let postsJSON = socialPosts.map { post -> [String: Any] in
                 post.dictionaryValue

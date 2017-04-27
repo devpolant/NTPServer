@@ -8,8 +8,10 @@
 
 import Foundation
 
-private let baseVKApiURL = URL(string: "https://api.vk.com")!
-private let vkApiVersion = "5.63"
+private struct VKAPI {
+    static let baseURL = URL(string: "https://api.vk.com")!
+    static let apiVersion = "5.63"
+}
 
 class VKDriver: SocialDriver {
     
@@ -49,10 +51,10 @@ class VKDriver: SocialDriver {
             "filter": "owner",
             "extended": true,
             "access_token": token,
-            "v": vkApiVersion
+            "v": VKAPI.apiVersion
         ]
         
-        let json = HTTPManager.shared.get("/method/wall.get", relatedTo: baseVKApiURL, parameters: parameters)
+        let json = HTTPManager.shared.get("/method/wall.get", relatedTo: VKAPI.baseURL, parameters: parameters)
         
         guard let response = json?["response"] else {
             completion([])
