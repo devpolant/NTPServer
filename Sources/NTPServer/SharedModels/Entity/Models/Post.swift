@@ -12,11 +12,13 @@ final class Post {
     var id: String
     var timestamp: Int
     var text: String
+    var photoUrl: String?
     
-    init(id: String, timestamp: Int, text: String) {
+    init(id: String, timestamp: Int, text: String, photoUrl: String? = nil) {
         self.id = id
         self.timestamp = timestamp
         self.text = text
+        self.photoUrl = photoUrl
     }
 }
 
@@ -31,10 +33,14 @@ extension Post: Entity {
 extension Post {
     
     var dictionaryValue: [String: Any] {
-        return [
+        var result: [String: Any] = [
             "id": id,
             "date": timestamp,
             "text": text
         ]
+        if let photo = photoUrl {
+            result["photo_url"] = photo
+        }
+        return result
     }
 }

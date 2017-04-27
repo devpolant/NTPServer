@@ -42,7 +42,8 @@ extension Post: MySQLInitializable {
         let id = node["id"]!.string!
         let timestamp = node["timestamp"]!.int!
         let text = node["text"]!.string!
-        self.init(id: id, timestamp: timestamp, text: text)
+        let photoUrl = node["photo_url"]?.string
+        self.init(id: id, timestamp: timestamp, text: text, photoUrl: photoUrl)
     }
 }
 

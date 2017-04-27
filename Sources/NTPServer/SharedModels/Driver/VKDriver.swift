@@ -70,7 +70,24 @@ class VKDriver: SocialDriver {
             let id = jsonObject["id"].stringValue
             let timestamp = jsonObject["date"].intValue
             let text = jsonObject["text"].stringValue
-            return Post(id: id, timestamp: timestamp, text: text)
+            
+            var photoURL: String?
+            
+            let attachments = jsonObject["attachments"].arrayValue
+            
+            if let attachment = attachments.first {
+                if attachment["type"].stringValue == "photo" {
+                    let photoDict = attachment["photo"].dictionaryValue
+                    
+                    if let photo604 = photoDict["photo_604"]?.stringValue {
+                        photoURL = photo604
+                    } else if let photo130 = photoDict["photo_130"]?.stringValue {
+                        photoURL = photo130
+                    }
+                }
+            }
+            
+            return Post(id: id, timestamp: timestamp, text: text, photoUrl: photoURL)
         }
         completion(parsedPosts)
     }
