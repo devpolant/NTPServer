@@ -144,7 +144,9 @@ class MobileAPIController: APIRouter {
         
         let result: [String: Any] = [
             "error": false,
-            "access_token": token.dictionaryValue
+            "access_token": token.dictionaryValue,
+            "user_login": user.login,
+            "user_email": user.email
         ]
         response.send(json: result)
     }
@@ -196,20 +198,40 @@ class MobileAPIController: APIRouter {
     func getWallPosts(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        let requiredFields = ["count", "offset", "group_domain", "user_id"]
+        let requiredFields = ["token", "count", "offset", "group_domain", "user_id"]
         
         guard let fields = request.getPost(fields: requiredFields) else {
             try response.badRequest(expected: requiredFields).end()
             return
         }
+        let token = fields["token"]!
         let group = fields["group_domain"]!
         let count = Int(fields["count"]!)!
         let offset = Int(fields["offset"]!)!
         let userId = Int(fields["user_id"]!)!
         
+        let (db, connection) = try MySQLConnector.connectToDatabase()
+        
+        var savedToken: String?
+        do {
+            savedToken = try DBUsersProvider.shared.token(forUserWithId: String(userId),
+                                                          destination: .app,
+                                                          from: db,
+                                                          on: connection)
+        } catch {
+            let errorMessage = "Error while checking token"
+            try? response.internalServerError(message: errorMessage).end()
+            return
+        }
+
+        guard let validToken = savedToken, validToken == token else {
+            let errorMessage = "Invalid token"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
         var oAuthToken: String?
         do {
-            let (db, connection) = try MySQLConnector.connectToDatabase()
             oAuthToken = try DBUsersProvider.shared.getOAuthTokenForUser(with: userId, to: db, on: connection)
         } catch {
             let errorMessage = "Error while loading posts"
@@ -217,10 +239,10 @@ class MobileAPIController: APIRouter {
             return
         }
         
-        guard let token = oAuthToken else { return }
+        guard let socialToken = oAuthToken else { return }
         
         var posts = [[String: Any]]()
-        driver.loadPosts(for: group, offset: offset, count: count, token: token) { socialPosts in
+        driver.loadPosts(for: group, offset: offset, count: count, token: socialToken) { socialPosts in
             
             let postsJSON = socialPosts.map { post -> [String: Any] in
                 post.dictionaryValue
