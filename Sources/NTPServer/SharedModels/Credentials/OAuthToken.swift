@@ -5,7 +5,7 @@
 //  Created by Anton Poltoratskyi on 30.03.17.
 //
 //
-
+import SwiftyJSON
 
 /// Used only in OAuth
 struct OAuthToken {
@@ -14,16 +14,23 @@ struct OAuthToken {
     var expiresIn: Double
     var userId: String
     
-    init(string: String, expiresIn timeInterval: Double, userId: String) {
-        self.tokenString = string
+    init(tokenString: String, expiresIn timeInterval: Double, userId: String) {
+        self.tokenString = tokenString
         self.expiresIn = timeInterval
         self.userId = userId
     }
 }
 
-// MARK: - JSON Convertation
+// MARK: - JSON Convertible
 
 extension OAuthToken {
+    
+    init(json: JSON) {
+        let tokenString = json["access_token"].stringValue
+        let expireInterval = json["expires_in"].doubleValue
+        let userId = json["user_id"].stringValue
+        self.init(tokenString: tokenString, expiresIn: expireInterval, userId: userId)
+    }
     
     var dictionaryValue: [String: Any] {
         return [

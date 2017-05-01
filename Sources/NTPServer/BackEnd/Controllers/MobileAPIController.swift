@@ -157,17 +157,16 @@ class MobileAPIController: APIRouter {
     func authSocialUser(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        let requiredFields = ["user_id", "code", "redirect_uri"]
+        let requiredFields = ["user_id", "code"]
         
         guard let fields = request.getPost(fields: requiredFields) else {
             try response.badRequest(expected: requiredFields).end()
             return
         }
-        let code = fields["code"]!
-        let redirectURI = fields["redirect_uri"]!
         let userId = Int(fields["user_id"]!)!
+        let code = fields["code"]!
         
-        let credentials = OAuthCredentials(stringValue: code, redirectURI: redirectURI)
+        let credentials = OAuthCredentials(code: code)
         
         var json: JSON?
         driver.auth(with: credentials) { result in

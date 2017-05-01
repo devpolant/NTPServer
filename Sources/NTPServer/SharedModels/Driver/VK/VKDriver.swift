@@ -7,38 +7,21 @@
 //
 
 import Foundation
-
-private struct VKAPI {
-    static let baseURL = URL(string: "https://api.vk.com")!
-    static let apiVersion = "5.63"
-}
+import SwiftyJSON
 
 class VKDriver: SocialDriver {
     
-    func auth(with credentials: OAuthCredentials, completion: (AuthResult<OAuthToken>) -> Void) {
+    func auth(with credentials: OAuthCredentials, completion: (Result<OAuthToken>) -> Void) {
         
-        let code = credentials.stringValue
-        let redirectURI = credentials.redirectURI
+        let authResult = VKAuthService.shared.authorize(app: VK.App.current, credentials: credentials)
         
-        let baseURL = URL(string: "https://oauth.vk.com")!
-        
-        let parameters: [String: Any] = [
-            "client_id": "5948504",
-            "client_secret": "P4ThWqsQhMcM2wkMjW6y",
-            "code": code,
-            "redirect_uri": redirectURI
-        ]
-        
-        guard let json = HTTPManager.shared.get("/access_token", relatedTo: baseURL, parameters: parameters) else {
-            completion(.error(AuthError.internalError))
-            return
+        switch authResult {
+        case let .success(json):
+            let accessToken = OAuthToken(json: json)
+            completion(.success(value: accessToken))
+        case let .error(authError):
+            completion(.error(authError))
         }
-        let tokenString = json["access_token"].stringValue
-        let timeInterval = json["expires_in"].doubleValue
-        let userId = json["user_id"].stringValue
-        
-        let accessToken = OAuthToken(string: tokenString, expiresIn: timeInterval, userId: userId)
-        completion(.success(token: accessToken))
     }
     
     func loadPosts(for group: SocialGroup, offset: Int, count: Int, token: String, completion: ([SocialPost]) -> Void) {
@@ -51,10 +34,10 @@ class VKDriver: SocialDriver {
             "filter": "owner",
             "extended": true,
             "access_token": token,
-            "v": VKAPI.apiVersion
+            "v": VK.API.version
         ]
         
-        let json = HTTPManager.shared.get("/method/wall.get", relatedTo: VKAPI.baseURL, parameters: parameters)
+        let json = HTTPManager.shared.get("/method/wall.get", relatedTo: VK.API.baseURL, parameters: parameters)
         
         guard let response = json?["response"] else {
             completion([])

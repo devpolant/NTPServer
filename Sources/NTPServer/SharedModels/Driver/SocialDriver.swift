@@ -6,7 +6,7 @@
 //
 //
 
-typealias AuthCompletion = (AuthResult<OAuthToken>) -> Void
+typealias AuthCompletion = (Result<OAuthToken>) -> Void
 typealias PostsCompletion = ([SocialPost]) -> Void
 
 typealias SocialGroup = String
@@ -17,8 +17,8 @@ enum AuthError {
     case internalError
 }
 
-enum AuthResult <T> {
-    case success(token: T)
+enum Result<Value> {
+    case success(value: Value)
     case error(AuthError)
 }
 
