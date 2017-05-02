@@ -38,7 +38,6 @@ extension Vendor: MySQLInitializable {
 
 extension Post: MySQLInitializable {
     convenience init(with node: [String: Node]) {
-        // FIXME: not implemented stub
         let id = node["id"]!.string!
         let timestamp = node["timestamp"]!.int!
         let text = node["text"]!.string!
@@ -55,7 +54,12 @@ extension App: MySQLInitializable {
         let vendorId = node["vendor_id"]!.int!
         let status = node["status"]!.string!
         let socialGroup = node["social_group"]?.string
-        self.init(id: id, name: name, location: location, vendorId: vendorId, status: status, socialGroup: socialGroup)
+        self.init(id: id,
+                  name: name,
+                  location: location,
+                  vendorId: vendorId,
+                  status: status,
+                  socialGroup: socialGroup)
     }
 }
 
@@ -66,7 +70,17 @@ extension Category: MySQLInitializable {
         let appId = node["app_id"]!.int!
         let socialGroupURL = node["social_group"]!.string!
         let socialNetworkId = node["social_network_id"]!.int!
-        self.init(id: id, name: name, appId: appId, socialGroupURL: socialGroupURL, socialNetworkId: socialNetworkId)
+        let filterQuery = node["filter_query"]?.string
+        var filter: Filter?
+        if let query = filterQuery {
+            filter = Filter(query: query)
+        }
+        self.init(id: id,
+                  name: name,
+                  appId: appId,
+                  socialGroupURL: socialGroupURL,
+                  socialNetworkId: socialNetworkId,
+                  filter: filter)
     }
 }
 

@@ -307,11 +307,17 @@ class WebAPIController: APIRouter {
             return
         }
         
+        var filter: Category.Filter?
+        if let filterFields = request.getPost(fields: ["filter_query"]) {
+            filter = Category.Filter(query: filterFields["filter_query"]!)
+        }
+        
         // TODO: customize category name
         let category = Category(name: name,
                                 appId: app.id!,
                                 socialGroupURL: socialGroupToParse,
-                                socialNetworkId: SocialNetwork.vk.identifier)
+                                socialNetworkId: SocialNetwork.vk.identifier,
+                                filter: filter)
         do {
             try DBVendorProvider.shared.insertCategory(category, to: db, on: connection)
         } catch {

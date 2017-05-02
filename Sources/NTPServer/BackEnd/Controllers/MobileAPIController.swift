@@ -21,6 +21,7 @@ class MobileAPIController: APIRouter {
         router.post("/auth/login", handler: self.loginUser)
         
         router.post("/oauth/vk", handler: self.authSocialUser)
+        router.post("/apps/:id", handler: self.getCurrentAppInfo)
         
         router.post("/posts/list", handler: self.getWallPosts)
         
@@ -192,12 +193,85 @@ class MobileAPIController: APIRouter {
     }
     
     
+    // MARK: - App
+    
+    func getCurrentAppInfo(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
+        
+        guard let appId = request.parameters["id"]?.int else {
+            try response.badRequest(expected: ["id"]).end()
+            return
+        }
+        
+        let requiredFields = ["token", "user_id"]
+        
+        guard let fields = request.getPost(fields: requiredFields) else {
+            try response.badRequest(expected: requiredFields).end()
+            return
+        }
+        let token = fields["token"]!
+        let userId = Int(fields["user_id"]!)!
+        
+        // Check token
+        
+        let (db, connection) = try MySQLConnector.connectToDatabase()
+        var savedToken: String?
+        do {
+            savedToken = try DBUsersProvider.shared.token(forUserWithId: String(userId),
+                                                          destination: .app,
+                                                          from: db,
+                                                          on: connection)
+        } catch {
+            let errorMessage = "Error while checking token"
+            try? response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        guard let validToken = savedToken, validToken == token else {
+            let errorMessage = "Invalid token"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        // Fetch app
+        
+        var app: App
+        do {
+            app = try DBVendorProvider.shared.fetchApp(with: appId, from: db, on: connection)
+        } catch {
+            let errorMessage = "Error while loading app with id=\(appId)"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        // Fetch categories
+        
+        var categories: [Category]
+        do {
+            categories = try DBVendorProvider.shared.fetchCategories(forApp: appId, from: db, on: connection)
+        } catch {
+            let errorMessage = "Error while loading categories for app with id=\(appId)"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        var appResponseDictionary = app.responseDictionary
+        appResponseDictionary["categories"] = categories.map { $0.responseDictionary }
+        
+        let result: [String: Any] = [
+            "error": false,
+            "app": appResponseDictionary
+        ]
+        response.send(json: result)
+    }
+    
+    
     // MARK: - Posts
     
     func getWallPosts(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
         defer { next() }
         
-        let requiredFields = ["token", "app_id", "count", "offset", "user_id"]
+        let requiredFields = ["token", "count", "offset", "user_id", "category_id", "owners_only"]
         
         guard let fields = request.getPost(fields: requiredFields) else {
             try response.badRequest(expected: requiredFields).end()
@@ -239,34 +313,41 @@ class MobileAPIController: APIRouter {
         }
         guard let socialToken = oAuthToken else { return }
         
-        // Fetch social group to parse for app with id
+        // Fetch social group to parse for category with id
         
-        let appId = Int(fields["app_id"]!)!
-        
-        var socialGroupToParse: String?
+        let categoryId = Int(fields["category_id"]!)!
+        var category: Category?
         do {
-            let category = try DBVendorProvider.shared.firstCategory(forApp: appId,
-                                                                     from: db,
-                                                                     on: connection)
-            socialGroupToParse = category.socialGroupDomainName
+            category = try DBVendorProvider.shared.fetchCategory(with: categoryId, from: db, on: connection)
         } catch {
             let errorMessage = "Error while loading app social group URL to parse"
             try? response.internalServerError(message: errorMessage).end()
             return
         }
         
-        guard let socialGroup = socialGroupToParse else { return }
+        guard let socialCategory = category else { return }
         
         let count = Int(fields["count"]!)!
         let offset = Int(fields["offset"]!)!
+        let ownersOnly: Bool = Int(fields["owners_only"]!)! != 0
+        let wallFilter: VKWallService.WallFilter = ownersOnly ? .owner : .all
         
         var posts = [[String: Any]]()
-        driver.loadPosts(for: socialGroup, offset: offset, count: count, token: socialToken) { socialPosts in
+        driver.loadPosts(for: socialCategory,
+                         wallFilter: wallFilter,
+                         offset: offset,
+                         count: count,
+                         token: socialToken) { result in
             
-            let postsJSON = socialPosts.map { post -> [String: Any] in
-                post.dictionaryValue
-            }
-            posts.append(contentsOf: postsJSON)
+                            switch result {
+                            case let .success(socialPosts):
+                                let postsJSON = socialPosts.map { post -> [String: Any] in
+                                    post.dictionaryValue
+                                }
+                                posts.append(contentsOf: postsJSON)
+                            case .error(_):
+                                break
+                            }
         }
         
         response.send(json: [

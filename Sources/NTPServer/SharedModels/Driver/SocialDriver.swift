@@ -7,9 +7,9 @@
 //
 
 typealias AuthCompletion = (Result<OAuthToken>) -> Void
-typealias PostsCompletion = ([SocialPost]) -> Void
+typealias PostsCompletion = (Result<[SocialPost]>) -> Void
 
-typealias SocialGroup = String
+typealias SocialCategory = Category
 typealias SocialPost = Post
 
 enum AuthError {
@@ -23,6 +23,13 @@ enum Result<Value> {
 }
 
 protocol SocialDriver {
+    
     func auth(with credentials: OAuthCredentials, completion: AuthCompletion)
-    func loadPosts(for group: SocialGroup, offset: Int, count: Int, token: String, completion: PostsCompletion)
+    
+    func loadPosts(for category: SocialCategory,
+                   wallFilter: VKWallService.WallFilter,
+                   offset: Int,
+                   count: Int,
+                   token: String,
+                   completion: PostsCompletion)
 }

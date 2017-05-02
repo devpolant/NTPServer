@@ -9,18 +9,21 @@
 import Foundation
 import SwiftyJSON
 
-struct VKAuthService {
+class VKAuthService {
+    
+    static let shared = VKAuthService()
+    private init() {}
     
     private struct Path {
         static let baseURL = URL(string: "https://oauth.vk.com")!
         static let token = "/access_token"
     }
     
-    private struct AuthParameters {
+    private struct AuthRequest {
         let app: VK.App
         let credentials: OAuthCredentials
         
-        var dictionary: [String: Any] {
+        var parameters: [String: Any] {
             return [
                 "client_id": app.clientId,
                 "client_secret": app.clientSecret,
@@ -30,13 +33,10 @@ struct VKAuthService {
         }
     }
     
-    static let shared = VKAuthService()
-    private init() {}
-    
     func authorize(app: VK.App, credentials: OAuthCredentials) -> Result<JSON> {
         
-        let parameters = AuthParameters(app: app, credentials: credentials)
-        let json = HTTPManager.shared.get(Path.token, relatedTo: Path.baseURL, parameters: parameters.dictionary)
+        let request = AuthRequest(app: app, credentials: credentials)
+        let json = HTTPManager.shared.get(Path.token, relatedTo: Path.baseURL, parameters: request.parameters)
         
         guard let jsonObject = json else {
             return .error(AuthError.internalError)

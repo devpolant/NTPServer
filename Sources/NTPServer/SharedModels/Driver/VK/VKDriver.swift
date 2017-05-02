@@ -11,7 +11,7 @@ import SwiftyJSON
 
 class VKDriver: SocialDriver {
     
-    func auth(with credentials: OAuthCredentials, completion: (Result<OAuthToken>) -> Void) {
+    func auth(with credentials: OAuthCredentials, completion: AuthCompletion) {
         
         let authResult = VKAuthService.shared.authorize(app: VK.App.current, credentials: credentials)
         
@@ -24,28 +24,43 @@ class VKDriver: SocialDriver {
         }
     }
     
-    func loadPosts(for group: SocialGroup, offset: Int, count: Int, token: String, completion: ([SocialPost]) -> Void) {
+    func loadPosts(for category: SocialCategory,
+                   wallFilter: VKWallService.WallFilter,
+                   offset: Int,
+                   count: Int,
+                   token: String,
+                   completion: PostsCompletion) {
         
-        let parameters: [String: Any] = [
-            "domain": group,
-//            "owner_id": -1,
-            "offset": offset,
-            "count": count,
-            "filter": "owner",
-            "extended": true,
-            "access_token": token,
-            "v": VK.API.version
-        ]
+//        let parameters: [String: Any] = [
+//            "domain": category.domain,
+////            "owner_id": -1,
+//            "offset": offset,
+//            "count": count,
+//            "filter": "owner",
+//            "extended": true,
+//            "access_token": token,
+//            "v": VK.API.version
+//        ]
+//        
+//        let json = HTTPManager.shared.get("/method/wall.get", relatedTo: VK.API.baseURL, parameters: parameters)
         
-        let json = HTTPManager.shared.get("/method/wall.get", relatedTo: VK.API.baseURL, parameters: parameters)
+        let responseResult = VKWallService.shared.wall(for: category,
+                                                       wallFilter: wallFilter,
+                                                       token: token,
+                                                       offset: offset,
+                                                       count: count)
         
-        guard let response = json?["response"] else {
-            completion([])
+        guard case let .success(json) = responseResult else {
+            if case let .error(wallError) = responseResult {
+                completion(.error(wallError))
+            }
             return
         }
         
+        let response = json["response"]
+        
         guard let posts = response["items"].array else {
-            completion([])
+            completion(.success(value: []))
             return
         }
         
@@ -72,6 +87,6 @@ class VKDriver: SocialDriver {
             
             return Post(id: id, timestamp: timestamp, text: text, photoUrl: photoURL)
         }
-        completion(parsedPosts)
+        completion(.success(value: parsedPosts))
     }
 }

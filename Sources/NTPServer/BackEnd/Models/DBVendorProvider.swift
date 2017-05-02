@@ -220,4 +220,14 @@ class DBVendorProvider {
         }
         return Category(with: categoryNode)
     }
+    
+    func fetchCategories(forApp appId: Int, from database: Database, on connection: Connection) throws -> [Category] {
+        let query = "SELECT * FROM `\(Category.entity)` WHERE `app_id` = ?;"
+        let arguments: [NodeRepresentable] = [appId]
+        
+        let categoriesJson = try database.execute(query, arguments, connection)
+        return categoriesJson.map {
+            Category(with: $0)
+        }
+    }
 }
