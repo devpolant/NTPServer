@@ -322,8 +322,9 @@ class WebAPIController: APIRouter {
             filter = Category.Filter(query: filterFields["filter_query"]!)
         }
         
-        // TODO: customize category name
-        let category = Category(name: name,
+        // Default category - 'Feed'
+        
+        let category = Category(name: "Feed",
                                 appId: app.id!,
                                 socialGroupURL: socialGroupToParse,
                                 socialNetworkId: SocialNetwork.vk.identifier,
