@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class Category {
+final class Category: Entity {
     
     struct Filter {
         var query: String
@@ -50,13 +50,16 @@ final class Category {
             self.filter = Filter(query: query)
         }
     }
-}
-
-// MARK: - Entity
-
-extension Category: Entity {
+    
+    // MARK: Entity
+    
     static let entity: String = "categories"
+    static var primaryKey: String = "id"
+    static var databaseFields: [String] = [
+        "name", "app_id", "social_group", "social_network_id", "filter_query"
+    ]
 }
+
 
 // MARK: - Response
 
@@ -66,7 +69,8 @@ extension Category {
             "name": name,
             "app_id": appId,
             "social_group": socialGroupURL,
-            "social_network_id": socialNetwork.identifier
+            "social_network_id": socialNetwork.identifier,
+            "social_network_name": socialNetwork.name
         ]
         if let id = id {
             result["id"] = id

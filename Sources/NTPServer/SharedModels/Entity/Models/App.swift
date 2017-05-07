@@ -21,7 +21,7 @@ enum AppStatus: String {
     }
 }
 
-final class App {
+final class App: Entity {
     
     var id: Int?
     
@@ -49,13 +49,16 @@ final class App {
         self.status = AppStatus(status: dictionary["status"] as! String)
         self.socialGroup = dictionary["social_group"] as? String
     }
-}
-
-// MARK: - Entity
-
-extension App: Entity {
+    
+    // MARK: Entity
+    
     static let entity: String = "apps"
+    static var primaryKey: String = "id"
+    static var databaseFields: [String] = [
+        
+    ]
 }
+
 
 // MARK: - Response
 

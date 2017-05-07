@@ -23,11 +23,13 @@ class WebAPIController: APIRouter {
         router.post("/vendor/profile", handler: self.getVendorProfile)
         router.post("/vendor/profile/update", handler: self.updateVendorProfile)
         
-        router.post("/vendor/apps/list", handler: self.appsList)            // List
-        router.post("/vendor/apps/:id/info", handler: self.appInfo)         // Read
-        router.post("/vendor/apps/create", handler: self.createApp)         // Insert
-        router.post("/vendor/apps/:id/update", handler: self.updateApp)     // Update
-        router.post("/vendor/apps/:id/delete", handler: self.deleteApp)     // Delete
+        router.post("/vendor/apps/list", handler: self.appsList)                        // List
+        router.post("/vendor/apps/:id/info", handler: self.appInfo)                     // Read
+        router.post("/vendor/apps/create", handler: self.createApp)                     // Insert
+        router.post("/vendor/apps/:id/update", handler: self.updateApp)                 // Update
+        router.post("/vendor/apps/:id/delete", handler: self.deleteApp)                 // Delete
+        
+        router.post("/vendor/apps/:id/category/create", handler: self.createCategory)   // Insert
         
         return router
     }()
@@ -261,18 +263,26 @@ class WebAPIController: APIRouter {
             return
         }
         
-        var app: App
+        let app: App
         do {
             app = try DBVendorProvider.shared.fetchApp(with: appId, from: db, on: connection)
         } catch {
-            let errorMessage = "Error while loading app with id=\(appId)"
-            try response.internalServerError(message: errorMessage).end()
+            try response.internalServerError(message: "Error while loading app with id=\(appId)").end()
+            return
+        }
+        
+        let appCategories: [Category]
+        do {
+            appCategories = try DBVendorProvider.shared.fetchCategories(forApp: appId, from: db, on: connection)
+        } catch {
+            try response.internalServerError(message: "Error while loading categories for app with id=\(appId)").end()
             return
         }
         
         let result: [String: Any] = [
             "error": false,
-            "app": app.responseDictionary
+            "app": app.responseDictionary,
+            "categories": appCategories.map { $0.responseDictionary }
         ]
         response.send(json: result)
     }
@@ -444,6 +454,58 @@ class WebAPIController: APIRouter {
         let result: [String: Any] = [
             "error": false,
             "deleted_app_id": appId
+        ]
+        response.send(json: result)
+    }
+    
+    
+    // MARK: - Categories
+    
+    func createCategory(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
+        
+        guard let appId = Int(request.parameters["id"]!) else { return }
+        
+        let requiredFields = ["token", "name", "social_group", "social_network_id"]
+        guard let fields = request.getPost(fields: requiredFields) else {
+            try response.badRequest(expected: requiredFields).end()
+            return
+        }
+        
+        let token = fields["token"]!
+        let (db, connection) = try MySQLConnector.connectToDatabase()
+        try db.execute("SET autocommit=0;", [], connection)
+        guard let _ = try? DBVendorProvider.shared.fetchVendor(withToken: token, from: db, on: connection) else {
+            return
+        }
+        
+        let name = fields["name"]!
+        let socialGroupToParse = fields["social_group"]!
+        let socialNetworkId = Int(fields["social_network_id"]!)!
+        
+        var filter: Category.Filter?
+        if let filterFields = request.getPost(fields: ["filter_query"]) {
+            filter = Category.Filter(query: filterFields["filter_query"]!)
+        }
+        
+        let category = Category(name: name,
+                                appId: appId,
+                                socialGroupURL: socialGroupToParse,
+                                socialNetworkId: socialNetworkId,
+                                filter: filter)
+        do {
+            let categroryID = try DBVendorProvider.shared.insertCategory(category, to: db, on: connection)
+            category.id = categroryID
+        } catch {
+            try response.internalServerError(message: "Error while creating category for app with id=\(appId)").end()
+            return
+        }
+        
+        try db.execute("COMMIT;", [], connection)
+        
+        let result: [String: Any] = [
+            "error": false,
+            "created_category": category.responseDictionary
         ]
         response.send(json: result)
     }

@@ -97,6 +97,8 @@ class FrontEnd {
 //            .post(handler: api.deleteApp)
         
         appsRouter.post("/:id/delete", handler: api.deleteApp)
+        
+        appsRouter.post("/:id/category/create", handler: api.createCategory)
     }
 }
 

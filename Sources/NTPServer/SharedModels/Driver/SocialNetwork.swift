@@ -18,4 +18,11 @@ enum SocialNetwork: Int {
     var identifier: Int {
         return rawValue
     }
+    
+    var name: String {
+        switch self {
+        case .vk:
+            return "VK"
+        }
+    }
 }

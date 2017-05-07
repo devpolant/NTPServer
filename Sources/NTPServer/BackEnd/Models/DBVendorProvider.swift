@@ -133,8 +133,17 @@ class DBVendorProvider {
         let query = "SELECT a.*, c.social_group FROM `\(App.entity)` a, `\(Category.entity)` c WHERE c.app_id = a.id AND  a.vendor_id = ?;"
         let arguments: [NodeRepresentable] = [vendorId]
         
+        var uniqueAppIds = [String: Any]()
+        
         let apps = try database.execute(query, arguments, connection)
-        return apps.map { App(with: $0) }
+        return apps.flatMap { json in
+            let appId = json[App.primaryKey]!.string!
+            guard uniqueAppIds[appId] == nil else {
+                return nil
+            }
+            uniqueAppIds[appId] = true
+            return App(with: json)
+        }
     }
     
     func fetchApp(with appId: Int, from database: Database, on connection: Connection) throws -> App {
@@ -166,8 +175,22 @@ class DBVendorProvider {
     
     @discardableResult
     func insertCategory(_ category: Category, to database: Database, on connection: Connection) throws -> Int {
-        let insertQuery = "INSERT INTO `\(Category.entity)` (name, app_id, social_group, social_network_id) VALUES (?, ?, ?, ?);"
-        let arguments: [NodeRepresentable] = [category.name, category.appId, category.socialGroupURL, category.socialNetwork.identifier]
+        
+        var fields = ["name", "app_id", "social_group", "social_network_id"]
+        var arguments: [NodeRepresentable] = [
+            category.name, category.appId, category.socialGroupURL, category.socialNetwork.identifier
+        ]
+        
+        if let filter = category.filter {
+            arguments.append(filter.query)
+            fields.append("filter_query")
+        }
+        
+        let sqlColumns = fields.joined(separator: ",")
+        let sqlValues = Array(repeating: "?", count: fields.count).joined(separator: ",")
+        
+        let insertQuery = "INSERT INTO `\(Category.entity)` (\(sqlColumns)) VALUES (\(sqlValues));"
+        print(insertQuery)
         // Insert
         try database.execute(insertQuery, arguments, connection)
         // Fetch inserted id
@@ -175,6 +198,7 @@ class DBVendorProvider {
     }
     
     func updateCategory(_ category: Category, in database: Database, on connection: Connection) throws {
+        // TODO: update filter_query
         guard let categoryId = category.id else {
             throw DBError.identifierAbsent(entityName: Category.entity)
         }

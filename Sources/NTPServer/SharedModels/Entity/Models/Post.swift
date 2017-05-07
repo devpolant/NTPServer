@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class Post {
+final class Post: Entity {
     var id: String
     var timestamp: Int
     var text: String
@@ -20,12 +20,14 @@ final class Post {
         self.text = text
         self.photoUrl = photoUrl
     }
-}
-
-// MARK: - Entity
-
-extension Post: Entity {
+    
+    // MARK: Entity
+    
     static let entity: String = "posts"
+    static var primaryKey: String = "id"
+    static var databaseFields: [String] = [
+        
+    ]
 }
 
 // MARK: - JSON Convertation

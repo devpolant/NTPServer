@@ -64,7 +64,7 @@
         <!-- Dashboard center content -->
 
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">App Name</h1>
+          <h1 class="page-header">Info</h1>
 
           <form class="form-app">
             <input type="hidden" id="inputAppId" name="app_id" value="{{ app_id }}">
@@ -86,6 +86,68 @@
             <input type="button" id="app-send-button" class="btn btn-info" value="Send" />
             <!-- <button class="btn btn-lg btn-primary btn-block" id="app-send-button" type="submit">Send</button> -->
           </form>
+
+          <h3>Categories:</h3>
+
+          <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th># ID</th>
+                  <th>Name</th>
+                  <th>Social Group</th>
+                  <th>Network</th>
+                  <th>Filter Query</th>
+                </tr>
+              </thead>
+              <tbody id="categories-table-body">
+              </tbody>
+          </table>
+
+          <button id="addCategoryButton" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#categoryCreateModal">Add Category</button>
+
+          <!-- Modal -->
+          <div id="categoryCreateModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Please, fill the form</h4>
+                </div>
+                <div class="modal-body">
+
+                    <form class="form-app">
+
+                        <h2 class="form-app-heading">Category</h2>
+
+                        <label for="inputCategoryName" class="sr-only">Category Name</label>
+                        <input type="text" name="category_name" id="inputCategoryName" class="form-control" placeholder="Name" required autofocus>
+
+                        <h2 class="form-app-heading">Social Group</h2>
+
+                        <label for="inputCategoryGroupName" class="sr-only">Social Group</label>
+                        <input type="text" name="group_name" id="inputCategoryGroupName" class="form-control" placeholder="https://vk.com/your-group-id" required autofocus>
+
+
+                        <h2 class="form-app-heading">Do you want to add a filter?</h2>
+
+                        <label for="inputFilterQuery" class="sr-only">Filter query</label>
+                        <input type="text" name="filter_query" id="inputFilterQuery" class="form-control" placeholder="Enter your filter query" required>
+
+                        <input type="button" id="category-send-button" class="btn btn-info" value="Create" />
+                        <!-- <button class="btn btn-lg btn-primary btn-block" id="app-send-button" type="submit">Send</button> -->
+                    </form>
+
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
 
           <footer class="footer app-footer">
             <div class="container">

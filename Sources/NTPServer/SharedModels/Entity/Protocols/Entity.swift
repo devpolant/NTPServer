@@ -10,4 +10,9 @@ import Foundation
 
 protocol Entity {
     static var entity: String { get }
+    static var primaryKey: String { get }
+    static var databaseFields: [String] { get }
 }
+
+
+

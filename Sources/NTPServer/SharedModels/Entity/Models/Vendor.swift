@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class Vendor {
+final class Vendor: Entity {
     
     var id: Int?
     
@@ -35,12 +35,14 @@ final class Vendor {
         self.salt = dictionary["salt"] as! String
         self.token = dictionary["token"] as! String
     }
-}
-
-// MARK: - Entity
-
-extension Vendor: Entity {
+    
+    // MARK: Entity
+    
     static let entity: String = "vendors"
+    static var primaryKey: String = "id"
+    static var databaseFields: [String] = [
+        
+    ]
 }
 
 // MARK: - Response

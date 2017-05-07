@@ -32,10 +32,12 @@ final class User {
         self.password = dictionary["password"] as! String
         self.salt = dictionary["salt"] as! String
     }
-}
-
-// MARK: - Entity
-
-extension User: Entity {
+    
+    // MARK: Entity
+    
     static let entity: String = "users"
+    static var primaryKey: String = "id"
+    static var databaseFields: [String] = [
+        
+    ]
 }

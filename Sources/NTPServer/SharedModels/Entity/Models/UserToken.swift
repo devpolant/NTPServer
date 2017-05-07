@@ -10,4 +10,8 @@ import Foundation
 
 final class UserToken: Entity {
     static let entity: String = "user_tokens"
+    static var primaryKey: String = "id"
+    static var databaseFields: [String] = [
+        
+    ]
 }

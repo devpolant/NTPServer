@@ -204,4 +204,29 @@ class FrontEndAPIController {
         response.send(json: jsonResult)
     }
     
+    
+    // MARK: - Create Category
+    
+    func createCategory(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
+        
+        guard let appId = Int(request.parameters["id"]!) else { return }
+        
+        let requiredFields = ["token", "name", "social_group", "social_network_id"]
+        guard var fields = request.getPost(fields: requiredFields) else {
+            try response.badRequest(expected: requiredFields).end()
+            return
+        }
+        
+        if let filterField = request.getPost(fields: ["filter_query"]) {
+            fields["filter_query"] = filterField["filter_query"]!
+        }
+        
+        let createResult = httpController.post("\(Path.apps)/\(appId)/category/create", fields: fields)
+        guard let jsonResult = createResult else {
+            return
+        }
+        response.send(json: jsonResult)
+    }
+    
 }
