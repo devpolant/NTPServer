@@ -4,9 +4,6 @@ $(document).ready(function () {
     $.ajax({
             url: "http://localhost:8090/dashboard/apps/list", 
             type:"POST",
-            // headers: {
-            //         'Authorization':'Bearer ' + token
-            // },
             data: { 
                 token: token 
             },
@@ -23,7 +20,8 @@ $(document).ready(function () {
                                     +'<td>'+ app.social_group + '</td>'
                                     +'<td>'+ app.location + '</td>'
                                     +'<td>'+ app.status + '</td>'
-                                    +'<td><a href="'+ '/dashboard/apps/' + app.id + '/info' +'" class="btn btn-info" role="button">View</a></td>');
+                                    +'<td><a href="'+ '/dashboard/apps/' + app.id + '/info' + '" class="btn btn-info" role="button">View</a></td>'
+                                    +'<td><a href="#" onClick="deleteApp(' + app.id + ');"' + ' class="btn btn-danger" role="button">Delete</a></td>');
                             }
                         } else {
                             $('#apps-table-body').append('<p style="margin:20px">You don\'t have apps yet</p>');
@@ -37,5 +35,32 @@ $(document).ready(function () {
                 console.log('Ошибка');
                 console.log(err);
             }
-        });
     });
+});
+
+
+function deleteApp (appId) {
+    var token = getToken();
+    $.ajax({
+            url: "http://localhost:8090/dashboard/apps/" + appId + "/delete", 
+            type:"POST",
+            data: { 
+                token: token 
+            },
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            success:function(data){
+                console.log(data);
+                try {
+                    if(!data.error) {
+                        location.reload();
+                    }
+                } catch(err) {
+                    alert(err.message);
+                }
+            },
+            error:function(err) {
+                console.log('Ошибка');
+                console.log(err);
+            }
+    });
+}
