@@ -142,3 +142,9 @@ body {
 #app-send-button {
   margin-top: 20px;
 }
+
+
+#map {
+  width: 400px;
+  height: 400px;
+}
