@@ -19,7 +19,15 @@ $(document).ready(function () {
                     var app = data.app;
                     $("#inputAppId").val(app.id);
                     $("#inputAppName").val(app.name);
-                    $("#inputLocation").val(app.location);
+
+                    var locationString = app.location;
+                    var locationComponents = locationString.split(";");
+                    var latLng = { 
+                        lat: parseFloat(locationComponents[0]),
+                        lng: parseFloat(locationComponents[1])
+                    }
+                    placeMarkerAndPanTo(latLng, map);
+
                     $("#inputGroupName").val(app.social_group);
 
                     if (data.categories.length > 0) {
@@ -86,7 +94,10 @@ $(document).ready(function () {
     $("#app-send-button").on("click", function () {
         var appId = $("#inputAppId").val();
         var name = $("#inputAppName").val();
-        var location = $("#inputLocation").val();
+        
+        var markerPosition = selectedLocation();
+        var location = markerPosition.lat() + ";" + markerPosition.lng();
+                      
         var socialGroup = $("#inputGroupName").val();
         $.ajax({
             url:"http://localhost:8090/dashboard/apps/" + appId + "/update",

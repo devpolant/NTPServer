@@ -102,6 +102,6 @@
     <!-- JS Files -->
     <script src="/static/js/utils/tokens.js" type="text/javascript"></script>
     <script src="/static/js/pages/create-app.js" type="text/javascript"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACL5tM7nPTi_zrMDlJbtqSApy5s8yeTeM&callback=initMap"></script>
+    {% include "map-script.stencil" %}
   </body>
 </html>

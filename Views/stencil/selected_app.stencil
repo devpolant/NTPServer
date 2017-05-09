@@ -78,12 +78,10 @@
 
 
             <h2 class="form-app-heading">Set your location</h2>
-
-            <label for="inputEmail" class="sr-only">Your Location</label>
-            <input type="text" name="location" id="inputLocation" class="form-control" placeholder="Location" required>
+            <div id="map"></div>
 
 
-            <input type="button" id="app-send-button" class="btn btn-info" value="Send" />
+            <input type="button" id="app-send-button" class="btn btn-info" value="Update" />
             <!-- <button class="btn btn-lg btn-primary btn-block" id="app-send-button" type="submit">Send</button> -->
           </form>
 
@@ -168,5 +166,6 @@
     <!-- JS Files -->
     <script src="/static/js/utils/tokens.js" type="text/javascript"></script>
     <script src="/static/js/pages/selected-app.js" type="text/javascript"></script>
+    {% include "map-script.stencil" %}
   </body>
 </html>
