@@ -25,6 +25,8 @@ class MobileAPIController: APIRouter {
         
         router.post("/posts/list", handler: self.getWallPosts)
         
+        router.post("/path", handler: self.getPathDirection)
+        
         return router
     }()
     
@@ -357,4 +359,52 @@ class MobileAPIController: APIRouter {
     }
     
     
+    // MARK: - Path Direction
+    
+    func getPathDirection(request: RouterRequest, response: RouterResponse, next: () -> Void) throws {
+        defer { next() }
+        
+        let requiredFields = ["token", "user_id"]
+        
+        guard let fields = request.getPost(fields: requiredFields) else {
+            try response.badRequest(expected: requiredFields).end()
+            return
+        }
+        let token = fields["token"]!
+        let userId = Int(fields["user_id"]!)!
+        
+        // Check token
+        
+        let (db, connection) = try MySQLConnector.connectToDatabase()
+        var savedToken: String?
+        do {
+            savedToken = try DBUsersProvider.shared.token(forUserWithId: String(userId),
+                                                          destination: .app,
+                                                          from: db,
+                                                          on: connection)
+        } catch {
+            let errorMessage = "Error while checking token"
+            try? response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        guard let validToken = savedToken, validToken == token else {
+            let errorMessage = "Invalid token"
+            try response.internalServerError(message: errorMessage).end()
+            return
+        }
+        
+        var path: String?
+        do {
+            path = try DBUsersProvider.shared.getPathDirection(forUserWithId: String(userId), from: db, on: connection)
+        } catch {
+            try response.internalServerError(message: "Error while get path direction").end()
+            return
+        }
+        
+        response.send(json: [
+            "error": false,
+            "path": path ?? ""
+            ])
+    }
 }

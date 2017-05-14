@@ -113,4 +113,29 @@ class DBUsersProvider {
         try database.execute(deleteQuery, arguments, connection)
     }
     
+    
+    // MARK: - Path Directions
+    
+    // MARK: Read
+    
+    func getPathDirection(forUserWithId userId: String, from database: Database, on connection: Connection) throws -> String? {
+        let query = "SELECT path FROM `\(User.entity)` WHERE id = ?;"
+        let arguments: [NodeRepresentable] = [userId]
+        
+        let result = try database.execute(query, arguments, connection)
+        guard let first = result.first, let path = first["path"]?.string else {
+            return nil
+        }
+        return path
+    }
+    
+    // MARK: Update
+    
+    func setPathDirection(_ path: String, forUserWithId userId: String, from database: Database, on connection: Connection) throws {
+        let query = "UPDATE `\(User.entity)` SET path = ? WHERE id = ?;"
+        let arguments: [NodeRepresentable] = [path, userId]
+        
+        try database.execute(query, arguments, connection)
+    }
+    
 }

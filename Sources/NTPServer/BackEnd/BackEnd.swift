@@ -8,24 +8,42 @@
 
 import Foundation
 import Kitura
-import SwiftyJSON
-import Cryptor
-import LoggerAPI
-
 
 class BackEnd {
     
     lazy var router: Router = {
         
         let router = Router()
-        router.post("/", middleware: BodyParser())
+        router.post("/", middleware: self.defaultParser)
         
-        let mobileController = MobileAPIController()
-        router.all("/mobile", middleware: mobileController.router)
-        
-        let webController = WebAPIController()
-        router.all("/web", middleware: webController.router)
+        router.all("/mobile", middleware: self.mobileAPI.router)
+        router.all("/web", middleware: self.webAPI.router)
+        router.all("/iot", middleware: self.iotAPI.router)
         
         return router
     }()
+}
+
+// MARK: - Parser
+
+extension BackEnd {
+    var defaultParser: RouterMiddleware {
+        return BodyParser()
+    }
+}
+
+// MARK: - API
+
+extension BackEnd {
+    var mobileAPI: APIRouter {
+        return MobileAPIController()
+    }
+    
+    var webAPI: APIRouter {
+        return WebAPIController()
+    }
+    
+    var iotAPI: APIRouter {
+        return IoTAPIController()
+    }
 }
