@@ -54,7 +54,6 @@
             <li class="active"><a href="#">Overview</a></li>
             <li><a href="/profile">My Profile</a></li>
             <li><a href="/dashboard/apps/create">Create App</a></li>
-            <li><a href="#">Analytics</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="">Logout</a></li>

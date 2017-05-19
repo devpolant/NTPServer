@@ -42,7 +42,7 @@
     </nav>
 
     <div class="app-header">
-		<h1>News Template Platform</h1>
+		<h1>Navigation Template Platform</h1>
 		<h3>Mobile and IoT platform for your business and social integration</h3>
 
     <div class="subscribe">
@@ -67,13 +67,16 @@
       	<article class="app-content">
 			<h1>Exprore more about World best Service</h1>
 
-			<img class="img-left" src="/static/images/iphone-7.png">
+			<img class="img-left" src="/static/images/beacon.jpg">
 
-			<p>
-				Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.
+			<p align="justify">
+				«NTP» (Navigation Template Platform) - an integrated system of mobile navigation with possibility of construction of the finished rishnya (mobilnie application), which are easily configured one administered by a centralized Internet applications.
 			</p>
-			<p>
-				Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.
+            <p align="justify">
+            One of the most valuable resources for human consumption is their personal time. This is a very topical issue for a variety of people from all walks of absolute population of most countries. Therefore, the demand for software systems that help people more efficiently use all the features of modern hardware and software for use in their needs.
+            </p>
+			<p align="justify">
+                Today the number of shopping centers and other retail space is increasing very rapidly. Increase their size. And people find it difficult to remember the ways in which they move, wanting to get this or that institution, shop and more. So the challenge is implementing a navigation system that can integrate with external geolocation services and the internal structure of buildings.
 			</p>
 
 		</article>
